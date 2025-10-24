@@ -1,12 +1,7 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-set -e
-
 # Typecheck (svelte-check + ts)
 bun run check
 # Full repo lint (not just staged)
 bun run lint
 # Ultracite checks (a11y, style, quality)
 bun run ultra:check
-
 
