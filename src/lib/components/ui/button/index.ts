@@ -1,5 +1,5 @@
-import { tv, type VariantProps } from 'tailwind-variants'
 import type { HTMLButtonAttributes } from 'svelte/elements'
+import { tv, type VariantProps } from 'tailwind-variants'
 import Root from './button.svelte'
 
 const buttonVariants = tv({
