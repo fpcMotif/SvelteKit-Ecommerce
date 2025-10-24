@@ -1,0 +1,142 @@
+{
+  "env": {
+    "browser": true,
+    "es2017": true,
+    "node": true
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": "./tsconfig.json"
+      }
+    }
+  },
+  "rules": {
+    "complexity": [
+      "error",
+      {
+        "max": 20
+      }
+    ],
+    "no-console": "error",
+    "no-debugger": "error",
+    "no-var": "error",
+    "prefer-const": "error",
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "no-empty": "error",
+    "no-duplicate-imports": "error",
+    "no-unreachable": "error",
+    "no-constant-condition": "error",
+    "no-unsafe-negation": "error",
+    "use-isnan": "error",
+    "valid-typeof": "error",
+    "eqeqeq": ["error", "always"],
+    "no-implicit-coercion": "error",
+    "no-param-reassign": "error",
+    "no-shadow": "error",
+    "no-delete-var": "error",
+    "no-label-var": "error",
+    "no-undef": "error",
+    "no-func-assign": "error",
+    "no-redeclare": "error",
+    "no-dupe-keys": "error",
+    "no-dupe-class-members": "error",
+    "no-dupe-else-if": "error",
+    "no-regex-spaces": "error",
+    "no-sparse-arrays": "error",
+    "no-irregular-whitespace": "error",
+    "no-control-regex": "error",
+    "for-direction": "error",
+    "getter-return": "error",
+    "constructor-super": "error",
+    "no-this-before-super": "error",
+    "no-class-assign": "error",
+    "no-const-assign": "error",
+    "no-import-assign": "error",
+    "no-obj-calls": "error",
+    "valid-constructor-return": "error",
+    "array-callback-return": [
+      "error",
+      {
+        "checkForEach": true
+      }
+    ],
+    "no-iterator": "error",
+    "no-with": "error",
+    "no-case-declarations": "error",
+    "no-fallthrough": "error",
+    "no-prototype-builtins": "error",
+    "no-compare-neg-zero": "error",
+    "no-cond-assign": "error",
+    "no-extra-boolean-cast": "error",
+    "no-inner-declarations": "error",
+    "no-loss-of-precision": "error",
+    "no-mixed-spaces-and-tabs": "error",
+    "no-multiple-empty-lines": [
+      "error",
+      {
+        "max": 1
+      }
+    ],
+    "no-trailing-spaces": "error",
+    "dot-notation": "error",
+    "no-floating-decimal": "error",
+    "no-multi-spaces": "error",
+    "no-whitespace-before-property": "error",
+    "semi": ["error", "always"],
+    "quotes": [
+      "error",
+      "single",
+      {
+        "avoidEscape": true
+      }
+    ],
+    "keyword-spacing": "error",
+    "space-before-blocks": "error",
+    "space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "always",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ],
+    "comma-spacing": "error",
+    "comma-dangle": ["error", "never"],
+    "semi-spacing": "error",
+    "indent": [
+      "error",
+      "tab",
+      {
+        "SwitchCase": 1
+      }
+    ],
+    "brace-style": ["error", "1tbs"]
+  },
+  "overrides": [
+    {
+      "files": ["**/*.ts", "**/*.tsx"],
+      "rules": {
+        "no-undef": "off"
+      }
+    },
+    {
+      "files": ["**/*.svelte"],
+      "rules": {}
+    }
+  ],
+  "ignorePatterns": [
+    "node_modules",
+    ".svelte-kit",
+    "build",
+    ".convex",
+    "dist",
+    "coverage"
+  ]
+}

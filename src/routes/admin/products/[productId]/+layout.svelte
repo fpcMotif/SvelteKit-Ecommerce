@@ -1,10 +1,11 @@
 <script>
-	import { goto } from '$app/navigation';
-	import * as Tabs from '$lib/components/ui/tabs';
-	export let data;
-	import { GanttChart, Image, Tag, Grid2X2 } from 'lucide-svelte';
+import { goto } from '$app/navigation'
+import * as Tabs from '$lib/components/ui/tabs'
+export let data
 
-	$: value = data.url.split('/').pop();
+import { GanttChart, Grid2X2, Image, Tag } from 'lucide-svelte'
+
+$: value = data.url.split('/').pop()
 </script>
 
 <div class="w-full p-8 flex flex-col items-center h-full">

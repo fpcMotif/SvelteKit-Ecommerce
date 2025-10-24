@@ -1,37 +1,36 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/button/button.svelte';
-	import { CldImage } from 'svelte-cloudinary';
-	import { addToCart } from '$lib/client/cart';
-	import { CldOgImage } from 'svelte-cloudinary';
+import { CldImage, CldOgImage } from 'svelte-cloudinary'
+import { addToCart } from '$lib/client/cart'
+import Button from '$lib/components/ui/button/button.svelte'
 
-	export let data;
+export let data
 
-	let selectedSizeIdx = 0;
-	while (
-		selectedSizeIdx < data.product.sizes.length &&
-		!data.product.sizes[selectedSizeIdx].isAvailable
-	)
-		selectedSizeIdx++;
+let selectedSizeIdx = 0
+while (
+	selectedSizeIdx < data.product.sizes.length &&
+	!data.product.sizes[selectedSizeIdx].isAvailable
+)
+	selectedSizeIdx++
 
-	const handleAddedToCart = () => {
-		const el = document.getElementById('added-to-cart');
-		el?.classList.remove('hidden');
-		setTimeout(() => {
-			el?.classList.add('hidden');
-		}, 4000);
-	};
+const handleAddedToCart = () => {
+	const el = document.getElementById('added-to-cart')
+	el?.classList.remove('hidden')
+	setTimeout(() => {
+		el?.classList.add('hidden')
+	}, 4000)
+}
 
-	// for top section spinny thing
-	let curIdx = 0;
-	let scrollSection: any;
+// for top section spinny thing
+let curIdx = 0
+let scrollSection: any
 
-	function handleScrollTop(e: any) {
-		curIdx = Math.round(e.target.scrollLeft / window.screen.width);
-	}
+function handleScrollTop(e: any) {
+	curIdx = Math.round(e.target.scrollLeft / window.screen.width)
+}
 
-	function handleSetTopScroll(idx: number) {
-		scrollSection.scrollLeft = idx * window.screen.width;
-	}
+function handleSetTopScroll(idx: number) {
+	scrollSection.scrollLeft = idx * window.screen.width
+}
 </script>
 
 <CldOgImage src={data.primaryImage?.cloudinaryId} alt={data.product.desc} />

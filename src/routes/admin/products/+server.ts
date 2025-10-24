@@ -1,11 +1,11 @@
-import { ensureAdmin } from '$lib/server/auth';
-import { deleteOneProduct } from '$lib/server/data/products.js';
-import { json } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit'
+import { ensureAdmin } from '$lib/server/auth'
+import { deleteOneProduct } from '$lib/server/data/products.js'
 
 export const DELETE = async ({ locals, url }) => {
-	ensureAdmin(locals);
+	ensureAdmin(locals)
 
-	const productId = url.searchParams.get('productId');
+	const productId = url.searchParams.get('productId')
 
 	if (!productId) {
 		return json(
@@ -13,10 +13,10 @@ export const DELETE = async ({ locals, url }) => {
 			{
 				status: 400
 			}
-		);
+		)
 	}
 
-	await deleteOneProduct(productId);
+	await deleteOneProduct(productId)
 
-	return new Response('success');
-};
+	return new Response('success')
+}

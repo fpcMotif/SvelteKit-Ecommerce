@@ -1,78 +1,78 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/button/button.svelte';
-	import { PlusCircle, MoreVertical, Edit, Trash } from 'lucide-svelte';
-	import * as Table from '$lib/components/ui/table';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import * as Sheet from '$lib/components/ui/sheet';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import { applyAction, deserialize } from '$app/forms';
-	import { invalidateAll } from '$app/navigation';
+import { Edit, MoreVertical, PlusCircle, Trash } from 'lucide-svelte'
+import { applyAction, deserialize } from '$app/forms'
+import { invalidateAll } from '$app/navigation'
+import Button from '$lib/components/ui/button/button.svelte'
+import * as DropdownMenu from '$lib/components/ui/dropdown-menu'
+import { Input } from '$lib/components/ui/input'
+import { Label } from '$lib/components/ui/label'
+import * as Sheet from '$lib/components/ui/sheet'
+import * as Table from '$lib/components/ui/table'
 
-	export let data;
+export let data
 
-	let openEditModal = false;
-	let editIdx: number | null = null;
+let openEditModal = false
+let editIdx: number | null = null
 
-	let createOpen = false;
+let createOpen = false
 
-	async function handleSubmitCreate(event: { currentTarget: EventTarget & HTMLFormElement }) {
-		const data = new FormData(event.currentTarget);
+async function handleSubmitCreate(event: { currentTarget: EventTarget & HTMLFormElement }) {
+	const data = new FormData(event.currentTarget)
 
-		const response = await fetch(event.currentTarget.action, {
-			method: 'POST',
-			body: data
-		});
+	const response = await fetch(event.currentTarget.action, {
+		method: 'POST',
+		body: data
+	})
 
-		const result = deserialize(await response.text());
+	const result = deserialize(await response.text())
 
-		if (result.type === 'success') {
-			// rerun all `load` functions, following the successful update
-			await invalidateAll();
-		}
-
-		applyAction(result);
-
-		createOpen = false;
+	if (result.type === 'success') {
+		// rerun all `load` functions, following the successful update
+		await invalidateAll()
 	}
 
-	async function handleSubmitDelete(event: { currentTarget: EventTarget & HTMLFormElement }) {
-		const data = new FormData(event.currentTarget);
+	applyAction(result)
 
-		const response = await fetch(event.currentTarget.action, {
-			method: 'POST',
-			body: data
-		});
+	createOpen = false
+}
 
-		const result = deserialize(await response.text());
+async function handleSubmitDelete(event: { currentTarget: EventTarget & HTMLFormElement }) {
+	const data = new FormData(event.currentTarget)
 
-		if (result.type === 'success') {
-			// rerun all `load` functions, following the successful update
-			await invalidateAll();
-		}
+	const response = await fetch(event.currentTarget.action, {
+		method: 'POST',
+		body: data
+	})
 
-		applyAction(result);
+	const result = deserialize(await response.text())
+
+	if (result.type === 'success') {
+		// rerun all `load` functions, following the successful update
+		await invalidateAll()
 	}
 
-	async function handleSubmitEdit(event: { currentTarget: EventTarget & HTMLFormElement }) {
-		const data = new FormData(event.currentTarget);
+	applyAction(result)
+}
 
-		const response = await fetch(event.currentTarget.action, {
-			method: 'POST',
-			body: data
-		});
+async function handleSubmitEdit(event: { currentTarget: EventTarget & HTMLFormElement }) {
+	const data = new FormData(event.currentTarget)
 
-		const result = deserialize(await response.text());
+	const response = await fetch(event.currentTarget.action, {
+		method: 'POST',
+		body: data
+	})
 
-		if (result.type === 'success') {
-			// rerun all `load` functions, following the successful update
-			await invalidateAll();
-		}
+	const result = deserialize(await response.text())
 
-		applyAction(result);
-
-		openEditModal = false;
+	if (result.type === 'success') {
+		// rerun all `load` functions, following the successful update
+		await invalidateAll()
 	}
+
+	applyAction(result)
+
+	openEditModal = false
+}
 </script>
 
 <div class="w-full h-full flex flex-col p-4">

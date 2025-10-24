@@ -1,37 +1,26 @@
-import { db } from '$lib/server/db';
-import { product, productImage, productSize } from '$lib/server/db/schema';
-import { error } from '@sveltejs/kit';
-import { and, asc, desc, eq } from 'drizzle-orm';
+import { error } from '@sveltejs/kit'
+import * as Effect from 'effect/Effect'
+import { query } from '$lib/effect/convex'
+import { runPromise } from '$lib/effect/runtime'
+import { api } from '../../../../convex/_generated/api'
 
 export const load = async ({ params }) => {
-	const firstProduct = await db.query.product.findFirst({
-		where: eq(product.id, params.productId),
-		with: {
-			images: {
-				orderBy: desc(productImage.isPrimary),
-				where: and(eq(productImage.isVertical, false), eq(productImage.isPrimary, false))
-			},
-			tags: {
-				with: {
-					tag: true
-				}
-			},
-			sizes: {
-				orderBy: asc(productSize.price)
-			}
+	const program = Effect.gen(function* () {
+		const product = yield* query(api.products.getById, { id: params.productId })
+
+		if (!product) {
+			error(404, {
+				message: 'Not found'
+			})
 		}
-	});
 
-	// get the primary image for the product
-	const primaryImage = await db.query.productImage.findFirst({
-		where: and(eq(productImage.isPrimary, true), eq(productImage.productId, params.productId))
-	});
+		const primaryImage = product.images.find((img) => img.isPrimary) || product.images[0] || null
 
-	if (!firstProduct) {
-		error(404, {
-			message: 'Not found'
-		});
-	}
+		return {
+			product,
+			primaryImage
+		}
+	})
 
-	return { product: firstProduct, primaryImage };
-};
+	return await runPromise(program)
+}

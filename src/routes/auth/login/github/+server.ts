@@ -1,22 +1,11 @@
-import { github } from '$lib/server/auth';
-import { generateState } from 'arctic';
-import { redirect } from '@sveltejs/kit';
-
-import type { RequestEvent } from '@sveltejs/kit';
+import type { RequestEvent } from '@sveltejs/kit'
+import { redirect } from '@sveltejs/kit'
+import { PUBLIC_CONVEX_URL } from '$env/static/public'
 
 export async function GET(event: RequestEvent): Promise<Response> {
-	const state = generateState();
-	const url = await github.createAuthorizationURL(state, {
-		scopes: ['user:email']
-	});
+	// Redirect to Convex Auth GitHub endpoint
+	const callbackUrl = `${event.url.origin}/auth/callback/github`
+	const authUrl = `${PUBLIC_CONVEX_URL}/auth/signin/github?redirectTo=${encodeURIComponent(callbackUrl)}`
 
-	event.cookies.set('github_oauth_state', state, {
-		path: '/',
-		secure: import.meta.env.PROD,
-		httpOnly: true,
-		maxAge: 60 * 10,
-		sameSite: 'lax'
-	});
-
-	return redirect(302, url.toString());
+	return redirect(302, authUrl)
 }

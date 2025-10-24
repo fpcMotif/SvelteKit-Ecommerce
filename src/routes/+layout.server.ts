@@ -1,52 +1,40 @@
-import { db } from '$lib/server/db/index';
-import { order, product, productTag, productToProductTag } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { convexHttp } from '$lib/server/convex'
+import { api } from '../../convex/_generated/api'
 
 export const load = async ({ locals }) => {
-	// figure out how many orders have been added, and send down a valid boolean
-	const orders = await db
-		.select({
-			id: order.stripeOrderId
-		})
-		.from(order);
+	// Get all orders
+	const orders = await convexHttp.query(api.orders.list, {})
 
-	const collections = await db
-		.select({ collection: productTag.name, name: product.name, id: product.id })
-		.from(productTag)
-		.innerJoin(productToProductTag, eq(productTag.name, productToProductTag.tagId))
-		.innerJoin(product, eq(product.id, productToProductTag.productId));
+	// Get all products
+	const allProducts = await convexHttp.query(api.products.list, { activeOnly: false })
 
+	// Build collections from product tags
 	const reducedCollections: {
-		collection: string;
+		collection: string
 		products: {
-			name: string;
-			id: string;
-		}[];
-	}[] = [];
+			name: string
+			id: string
+		}[]
+	}[] = []
 
-	collections.forEach((el) => {
-		let found = false;
-		reducedCollections.forEach((col) => {
-			if (col.collection == el.collection) {
-				col.products.push({ name: el.name, id: el.id });
-				found = true;
+	allProducts.forEach((product) => {
+		product.tags.forEach((tag) => {
+			const collection = reducedCollections.find((col) => col.collection === tag)
+			if (collection) {
+				collection.products.push({ name: product.name, id: product.id })
+			} else {
+				reducedCollections.push({
+					collection: tag,
+					products: [{ name: product.name, id: product.id }]
+				})
 			}
-		});
-		if (!found) {
-			reducedCollections.push({
-				collection: el.collection,
-				products: [{ name: el.name, id: el.id }]
-			});
-		}
-		found = false;
-	});
-
-	const pieces = await db
-		.select({
-			id: product.id,
-			name: product.name
 		})
-		.from(product);
+	})
+
+	const pieces = allProducts.map((p) => ({
+		id: p.id,
+		name: p.name
+	}))
 
 	return {
 		user: locals.user,
@@ -54,5 +42,5 @@ export const load = async ({ locals }) => {
 		isSoldOut: orders.length >= 10,
 		numberLeft: 10 - orders.length,
 		pieces
-	};
-};
+	}
+}

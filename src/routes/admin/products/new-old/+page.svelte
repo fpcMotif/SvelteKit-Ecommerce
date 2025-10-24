@@ -1,41 +1,41 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
-	import { CldImage, CldUploadButton } from 'svelte-cloudinary';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import { Textarea } from '$lib/components/ui/textarea';
-	import Button from '$lib/components/ui/button/button.svelte';
+import { CldImage, CldUploadButton } from 'svelte-cloudinary'
+import { enhance } from '$app/forms'
+import { goto } from '$app/navigation'
+import Button from '$lib/components/ui/button/button.svelte'
+import { Input } from '$lib/components/ui/input'
+import { Label } from '$lib/components/ui/label'
+import { Textarea } from '$lib/components/ui/textarea'
 
-	let images: {
-		publicId: string;
-		width: number;
-		height: number;
-	}[] = [];
+let images: {
+	publicId: string
+	width: number
+	height: number
+}[] = []
 
-	const addImage = (info: Record<string, unknown>) => {
-		// the type on res.info for success is Record<string, unknown>
-		// the key items we want to get off of it are: public_id, width, height,
+const addImage = (info: Record<string, unknown>) => {
+	// the type on res.info for success is Record<string, unknown>
+	// the key items we want to get off of it are: public_id, width, height,
 
-		const publicId = info.public_id as string;
-		const width = parseInt(info.width as string);
-		const height = parseInt(info.height as string);
+	const publicId = info.public_id as string
+	const width = parseInt(info.width as string)
+	const height = parseInt(info.height as string)
 
-		images = [
-			...images,
-			{
-				publicId,
-				width,
-				height
-			}
-		];
-	};
+	images = [
+		...images,
+		{
+			publicId,
+			width,
+			height
+		}
+	]
+}
 
-	const removeImage = (idx: number) => {
-		const copy = images;
-		copy.splice(idx, 1);
-		images = copy;
-	};
+const removeImage = (idx: number) => {
+	const copy = images
+	copy.splice(idx, 1)
+	images = copy
+}
 </script>
 
 <form

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import * as Card from '$lib/components/ui/card';
-	import { Github, Chrome } from 'lucide-svelte';
-	import { Button } from '$lib/components/ui/button';
+import { Chrome, Github } from 'lucide-svelte'
+import { Button } from '$lib/components/ui/button'
+import * as Card from '$lib/components/ui/card'
 </script>
 
 <Card.Root class="w-[400px]">

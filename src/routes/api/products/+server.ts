@@ -8,5 +8,5 @@ export const GET = async () => {
 	// const takeNum = takeStr ? parseInt(takeStr) : undefined;
 	// const skipNum = skipStr ? parseInt(skipStr) : undefined;
 
-	return new Response(String('TESTING'));
-};
+	return new Response(String('TESTING'))
+}

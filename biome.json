@@ -1,0 +1,46 @@
+{
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "tab",
+    "indentWidth": 1,
+    "lineWidth": 100,
+    "bracketSpacing": true
+  },
+  "linter": {
+    "enabled": false
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "trailingCommas": "none",
+      "semicolons": "asNeeded"
+    }
+  },
+  "json": {
+    "formatter": {
+      "trailingCommas": "none"
+    }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "*.svelte"
+      ],
+      "formatter": {
+        "enabled": false
+      }
+    },
+    {
+      "includes": [
+        "**/tsconfig*.json"
+      ],
+      "formatter": {
+        "enabled": false
+      }
+    }
+  ],
+  "extends": [
+    "ultracite"
+  ],
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json"
+}

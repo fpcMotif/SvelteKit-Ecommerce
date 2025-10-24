@@ -1,19 +1,19 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import { Textarea } from '$lib/components/ui/textarea';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Alert from '$lib/components/ui/alert';
-	import { Check } from 'lucide-svelte';
-	import { fade } from 'svelte/transition';
-	import { invalidateAll } from '$app/navigation';
+import { Check } from 'lucide-svelte'
+import { fade } from 'svelte/transition'
+import { enhance } from '$app/forms'
+import { invalidateAll } from '$app/navigation'
+import * as Alert from '$lib/components/ui/alert'
+import Button from '$lib/components/ui/button/button.svelte'
+import { Input } from '$lib/components/ui/input'
+import { Label } from '$lib/components/ui/label'
+import { Textarea } from '$lib/components/ui/textarea'
 
-	export let data;
+export let data
 
-	let disableUpdate = true;
+let disableUpdate = true
 
-	let showSuccess = false;
+let showSuccess = false
 </script>
 
 <form

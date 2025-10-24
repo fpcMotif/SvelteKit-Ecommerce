@@ -9,18 +9,18 @@ import {
 	Preview,
 	Section,
 	Text
-} from '@react-email/components';
-import { Tailwind } from '@react-email/tailwind';
-import * as React from 'react';
+} from '@react-email/components'
+import { Tailwind } from '@react-email/tailwind'
+import * as React from 'react'
 
 interface SedimentListThankYouProps {
-	unsubKey: string;
-	email: string;
+	unsubKey: string
+	email: string
 }
 
 const baseUrl = process.env.VERCEL_URL
 	? `https://${process.env.VERCEL_URL}`
-	: 'http://localhost:5173';
+	: 'http://localhost:5173'
 
 export const SedimentListThankYou = ({ unsubKey, email }: SedimentListThankYouProps) => {
 	return (
@@ -32,11 +32,11 @@ export const SedimentListThankYou = ({ unsubKey, email }: SedimentListThankYouPr
 					<Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] max-w-[465px]">
 						<Section className="mt-[32px]">
 							<Img
-								src="https://res.cloudinary.com/insiderviz/image/upload/f_auto,q_auto/ly9xqkjkn8rat1l3lxex"
 								alt="Sediment Art"
-								width="300"
-								height="102"
 								className="my-0 mx-auto"
+								height="102"
+								src="https://res.cloudinary.com/insiderviz/image/upload/f_auto,q_auto/ly9xqkjkn8rat1l3lxex"
+								width="300"
 							/>
 						</Section>
 						<Text className="text-black text-[14px] leading-[24px]">Welcome to Sediment Art! </Text>
@@ -55,9 +55,7 @@ export const SedimentListThankYou = ({ unsubKey, email }: SedimentListThankYouPr
 
 						<Text className="text-black text-[12px] leading-[4px] pt-4">Best,</Text>
 						<Text className="text-black text-[12px] leading-[4px] ml-1">Ben Davis</Text>
-						<Text className="text-black text-[12px] leading-[4px] ml-1 italic">
-							Sediment Art Team
-						</Text>
+						<Text className="text-black text-[12px] leading-[4px] ml-1 italic">Sediment Art Team</Text>
 						<Hr className="border border-solid border-[#eaeaea] my-[26px] mx-0 w-full" />
 						<Link
 							className="text-[#666666] text-[12px] leading-[24px]"
@@ -69,7 +67,7 @@ export const SedimentListThankYou = ({ unsubKey, email }: SedimentListThankYouPr
 				</Body>
 			</Tailwind>
 		</Html>
-	);
-};
+	)
+}
 
-export default SedimentListThankYou;
+export default SedimentListThankYou

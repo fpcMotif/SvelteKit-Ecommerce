@@ -1,91 +1,91 @@
 <script lang="ts">
-	import { deserialize } from '$app/forms';
-	import ProductCard from '$lib/components/ProductCard.svelte';
-	import { page } from '$app/stores';
-	import { goto, pushState } from '$app/navigation';
-	import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../lib/components/ui/tabs';
-	import ProductPage from './[productId]/+page.svelte';
-	import { fade, fly } from 'svelte/transition';
+import { fade, fly } from 'svelte/transition'
+import { deserialize } from '$app/forms'
+import { goto, pushState } from '$app/navigation'
+import { page } from '$app/stores'
+import ProductCard from '$lib/components/ProductCard.svelte'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../lib/components/ui/tabs'
+import ProductPage from './[productId]/+page.svelte'
 
-	export let data;
+export let data
 
-	let searchResults: { tagName: string; tagDesc: string }[] = [];
+let searchResults: { tagName: string; tagDesc: string }[] = []
 
-	let debounceTimer: NodeJS.Timeout | undefined;
+let debounceTimer: NodeJS.Timeout | undefined
 
-	let searchQuery = '';
+let searchQuery = ''
 
-	let displayMode = 'sm';
+let displayMode = 'sm'
 
-	// this feels really stupid...
-	$: searchQuery !== '' && handleInputChange(searchQuery);
+// this feels really stupid...
+$: searchQuery !== '' && handleInputChange(searchQuery)
 
-	function handleInputChange(query: string) {
-		clearTimeout(debounceTimer);
+function handleInputChange(query: string) {
+	clearTimeout(debounceTimer)
 
-		debounceTimer = setTimeout(() => {
-			handleSearch(query);
-		}, 400);
+	debounceTimer = setTimeout(() => {
+		handleSearch(query)
+	}, 400)
+}
+
+function addParam(param: string) {
+	const curParams = $page.url.searchParams.getAll('tag')
+
+	searchResults = []
+
+	searchQuery = ''
+
+	if (!curParams.includes(param)) {
+		$page.url.searchParams.append('tag', param)
+		goto(`?${$page.url.searchParams.toString()}`, {
+			invalidateAll: true
+		})
 	}
+}
 
-	function addParam(param: string) {
-		const curParams = $page.url.searchParams.getAll('tag');
+function removeParam(param: string) {
+	const tags = $page.url.searchParams.getAll('tag')
 
-		searchResults = [];
+	const idx = tags.findIndex((v) => v === param)
 
-		searchQuery = '';
+	if (idx >= 0) {
+		tags.splice(idx, 1)
 
-		if (!curParams.includes(param)) {
-			$page.url.searchParams.append('tag', param);
-			goto(`?${$page.url.searchParams.toString()}`, {
-				invalidateAll: true
-			});
+		$page.url.searchParams.delete('tag')
+
+		tags.forEach((t) => {
+			$page.url.searchParams.append('tag', t)
+		})
+
+		goto(`?${$page.url.searchParams.toString()}`, {
+			invalidateAll: true
+		})
+	}
+}
+
+async function handleSearch(query: string) {
+	const formData = new FormData()
+
+	formData.append('query', query)
+
+	const response = await fetch(`/products`, {
+		method: 'POST',
+		body: formData
+	})
+
+	const result = deserialize(await response.text())
+
+	if (result.type === 'success') {
+		// grab the search results
+		const { searchedTags } = result.data as {
+			searchedTags: { tagName: string; tagDesc: string }[]
 		}
+
+		searchResults = searchedTags
 	}
+}
 
-	function removeParam(param: string) {
-		const tags = $page.url.searchParams.getAll('tag');
-
-		const idx = tags.findIndex((v) => v === param);
-
-		if (idx >= 0) {
-			tags.splice(idx, 1);
-
-			$page.url.searchParams.delete('tag');
-
-			tags.forEach((t) => {
-				$page.url.searchParams.append('tag', t);
-			});
-
-			goto(`?${$page.url.searchParams.toString()}`, {
-				invalidateAll: true
-			});
-		}
-	}
-
-	async function handleSearch(query: string) {
-		const formData = new FormData();
-
-		formData.append('query', query);
-
-		const response = await fetch(`/products`, {
-			method: 'POST',
-			body: formData
-		});
-
-		const result = deserialize(await response.text());
-
-		if (result.type === 'success') {
-			// grab the search results
-			const { searchedTags } = result.data as {
-				searchedTags: { tagName: string; tagDesc: string }[];
-			};
-
-			searchResults = searchedTags;
-		}
-	}
-
-	$: selected = ($page.state as any).selected;
+$: selected = ($page.state as any).selected
 </script>
 
 <!-- MODAL -->
@@ -157,7 +157,7 @@
 						name: product.name,
 						productId: product.id,
 						cloudinaryId: product.images.length > 0 ? product.images[0].cloudinaryId : null,
-						tags: product.tags.map((tag) => tag.tagId),
+						tags: product.tags,
 						selectTag: addParam,
 						displayMode: displayMode,
 						sizes: product.sizes,

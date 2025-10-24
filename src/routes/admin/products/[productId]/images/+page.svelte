@@ -1,41 +1,40 @@
 <script lang="ts">
-	import { CldImage, CldUploadButton, CldUploadWidget } from 'svelte-cloudinary';
-	import { FolderKanban, Trash, Crown, ToggleRight } from 'lucide-svelte';
-	import { invalidateAll } from '$app/navigation';
-	import { deserialize } from '$app/forms';
-	import { enhance } from '$app/forms';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import { Button } from '$lib/components/ui/button';
-	import { env } from '$env/dynamic/public';
+import { Crown, FolderKanban, ToggleRight, Trash } from 'lucide-svelte'
+import { CldImage, CldUploadButton, CldUploadWidget } from 'svelte-cloudinary'
+import { deserialize, enhance } from '$app/forms'
+import { invalidateAll } from '$app/navigation'
+import { env } from '$env/dynamic/public'
+import { Button } from '$lib/components/ui/button'
+import * as DropdownMenu from '$lib/components/ui/dropdown-menu'
 
-	export let data;
+export let data
 
-	// TODO type this up
-	async function handleSubmit(info: unknown) {
-		const { public_id, width, height } = info as {
-			public_id: string;
-			width: number;
-			height: number;
-		};
-
-		const formData = new FormData();
-
-		formData.append('cloudinaryId', public_id);
-		formData.append('width', width.toString());
-		formData.append('height', height.toString());
-
-		const response = await fetch(`/admin/products/${data.productId}/images?/create`, {
-			method: 'POST',
-			body: formData
-		});
-
-		const result = deserialize(await response.text());
-
-		if (result.type === 'success') {
-			// rerun all `load` functions, following the successful update
-			await invalidateAll();
-		}
+// TODO type this up
+async function handleSubmit(info: unknown) {
+	const { public_id, width, height } = info as {
+		public_id: string
+		width: number
+		height: number
 	}
+
+	const formData = new FormData()
+
+	formData.append('cloudinaryId', public_id)
+	formData.append('width', width.toString())
+	formData.append('height', height.toString())
+
+	const response = await fetch(`/admin/products/${data.productId}/images?/create`, {
+		method: 'POST',
+		body: formData
+	})
+
+	const result = deserialize(await response.text())
+
+	if (result.type === 'success') {
+		// rerun all `load` functions, following the successful update
+		await invalidateAll()
+	}
+}
 </script>
 
 <div class="w-full h-full p-8 flex flex-col">

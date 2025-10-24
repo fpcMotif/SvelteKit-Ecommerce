@@ -1,5 +1,5 @@
 <script>
-	import * as Accordion from '$lib/components/ui/accordion';
+import * as Accordion from '$lib/components/ui/accordion'
 </script>
 
 <div class="flex flex-col md:flex-row md:p-16 bg-white grow min-h-screen">

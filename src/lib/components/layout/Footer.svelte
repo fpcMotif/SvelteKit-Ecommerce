@@ -1,5 +1,5 @@
 <script>
-	import { Instagram } from 'lucide-svelte';
+import { Instagram } from 'lucide-svelte'
 </script>
 
 <footer class="bg-white text-neutral-800 py-6">

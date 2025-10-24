@@ -1,39 +1,39 @@
 <script lang="ts">
-	import { getCart, removeFromCart, addToCart, decrementQuantity } from '$lib/client/cart';
-	import { applyAction, deserialize } from '$app/forms';
-	import type { ActionResult } from '@sveltejs/kit';
-	import { CldImage } from 'svelte-cloudinary';
-	import { Button } from '$lib/components/ui/button';
-	import * as Dialog from '$lib/components/ui/dialog';
-	import { goto } from '$app/navigation';
+import type { ActionResult } from '@sveltejs/kit'
+import { CldImage } from 'svelte-cloudinary'
+import { applyAction, deserialize } from '$app/forms'
+import { goto } from '$app/navigation'
+import { addToCart, decrementQuantity, getCart, removeFromCart } from '$lib/client/cart'
+import { Button } from '$lib/components/ui/button'
+import * as Dialog from '$lib/components/ui/dialog'
 
-	export let data;
+export let data
 
-	$: cart = getCart();
+$: cart = getCart()
 
-	$: total =
-		cart.length > 0
-			? cart.reduce((prev, curr) => {
-					return {
-						...prev,
-						size: {
-							...prev.size,
-							price: prev.size.price + curr.size.price * curr.quantity
-						}
-					};
-			  }).size.price / 100
-			: 0;
+$: total =
+	cart.length > 0
+		? cart.reduce((prev, curr) => {
+				return {
+					...prev,
+					size: {
+						...prev.size,
+						price: prev.size.price + curr.size.price * curr.quantity
+					}
+				}
+			}).size.price / 100
+		: 0
 
-	async function handleSubmit(event: { currentTarget: EventTarget & HTMLFormElement }) {
-		const response = await fetch(event.currentTarget.action, {
-			method: 'POST',
-			body: JSON.stringify(cart)
-		});
+async function handleSubmit(event: { currentTarget: EventTarget & HTMLFormElement }) {
+	const response = await fetch(event.currentTarget.action, {
+		method: 'POST',
+		body: JSON.stringify(cart)
+	})
 
-		const result: ActionResult<{ url: string }> = deserialize(await response.text());
+	const result: ActionResult<{ url: string }> = deserialize(await response.text())
 
-		applyAction(result);
-	}
+	applyAction(result)
+}
 </script>
 
 <div class="w-full flex md:px-20 md:py-4 md:gap-x-16 bg-white flex-col gap-3 px-2 grow">

@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import { Textarea } from '$lib/components/ui/textarea';
-	import Button from '$lib/components/ui/button/button.svelte';
+import { enhance } from '$app/forms'
+import { goto } from '$app/navigation'
+import Button from '$lib/components/ui/button/button.svelte'
+import { Input } from '$lib/components/ui/input'
+import { Label } from '$lib/components/ui/label'
+import { Textarea } from '$lib/components/ui/textarea'
 </script>
 
 <form

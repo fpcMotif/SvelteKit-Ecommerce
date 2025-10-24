@@ -1,14 +1,15 @@
 // SEED THE DB
+
+import { connect } from '@planetscale/database'
+import { drizzle } from 'drizzle-orm/planetscale-serverless'
 import {
 	product,
 	productImage,
 	productSize,
 	productTag,
 	productToProductTag
-} from './src/lib/server/db/schema';
-import { drizzle } from 'drizzle-orm/planetscale-serverless';
-import { connect } from '@planetscale/database';
-import 'dotenv/config';
+} from './src/lib/server/db/schema'
+import 'dotenv/config'
 
 const seed = async () => {
 	// crete db client
@@ -16,9 +17,9 @@ const seed = async () => {
 		host: process.env.DATABASE_HOST ?? '',
 		username: process.env.DATABASE_USERNAME ?? '',
 		password: process.env.DATABASE_PASSWORD ?? ''
-	});
+	})
 
-	const db = drizzle(connection);
+	const db = drizzle(connection)
 
 	// create some products
 	const products = [
@@ -33,11 +34,11 @@ const seed = async () => {
 			desc: 'A second test product...',
 			id: 'my_second_product'
 		}
-	];
+	]
 
-	const insertedProducts = (await db.insert(product).values(products)).rows;
+	const insertedProducts = (await db.insert(product).values(products)).rows
 
-	console.log(`INSERTED: ${insertedProducts.length} products`);
+	console.log(`INSERTED: ${insertedProducts.length} products`)
 
 	// create some product sizes
 	// TODO STRIPE:
@@ -97,11 +98,11 @@ const seed = async () => {
 			stripePriceId: 'price_1OAGYBDVy0rtNA6WZ7fSwK2d',
 			productId: 'my_second_product'
 		}
-	];
+	]
 
-	const insertedProductSizes = (await db.insert(productSize).values(productSizes)).rows;
+	const insertedProductSizes = (await db.insert(productSize).values(productSizes)).rows
 
-	console.log(`INSERTED: ${insertedProductSizes.length} product sizes`);
+	console.log(`INSERTED: ${insertedProductSizes.length} product sizes`)
 
 	// create some product images
 	// TODO CLOUDINARY: update the cloudinaryIds with your own cloudinary ids
@@ -130,11 +131,11 @@ const seed = async () => {
 			height: 1280,
 			productId: 'my_second_product'
 		}
-	];
+	]
 
-	const insertedImages = (await db.insert(productImage).values(images)).rows;
+	const insertedImages = (await db.insert(productImage).values(images)).rows
 
-	console.log(`INSERTED: ${insertedImages.length} product images`);
+	console.log(`INSERTED: ${insertedImages.length} product images`)
 
 	// create some product tags
 	const productTags = [
@@ -146,11 +147,11 @@ const seed = async () => {
 			name: 'Aerospace',
 			desc: 'Planes, spaceships, & more...'
 		}
-	];
+	]
 
-	const insertedTags = (await db.insert(productTag).values(productTags)).rows;
+	const insertedTags = (await db.insert(productTag).values(productTags)).rows
 
-	console.log(`INSERTED ${insertedTags.length} product tags`);
+	console.log(`INSERTED ${insertedTags.length} product tags`)
 
 	// attach tags to products
 	const productsToTags = [
@@ -162,11 +163,11 @@ const seed = async () => {
 			productId: 'my_second_product',
 			tagId: 'Aerospace'
 		}
-	];
+	]
 
-	const insertedTagsToProducts = (await db.insert(productToProductTag).values(productsToTags)).rows;
+	const insertedTagsToProducts = (await db.insert(productToProductTag).values(productsToTags)).rows
 
-	console.log(`INSERTED ${insertedTagsToProducts.length} product tag relations`);
-};
+	console.log(`INSERTED ${insertedTagsToProducts.length} product tag relations`)
+}
 
-seed();
+seed()

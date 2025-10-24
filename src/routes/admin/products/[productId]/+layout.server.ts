@@ -1,11 +1,11 @@
-import { ensureAdmin } from '$lib/server/auth';
-import { db } from '$lib/server/db';
-import { product } from '$lib/server/db/schema.js';
-import { error } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
+import { error } from '@sveltejs/kit'
+import { eq } from 'drizzle-orm'
+import { ensureAdmin } from '$lib/server/auth'
+import { db } from '$lib/server/db'
+import { product } from '$lib/server/db/schema.js'
 
 export const load = async ({ locals, params }) => {
-	ensureAdmin(locals);
+	ensureAdmin(locals)
 
 	const firstProduct = await db.query.product.findFirst({
 		where: eq(product.id, params.productId),
@@ -13,11 +13,11 @@ export const load = async ({ locals, params }) => {
 			name: true,
 			desc: true
 		}
-	});
+	})
 
 	if (!firstProduct) {
-		error(404);
+		error(404)
 	}
 
-	return { productId: params.productId, productBasics: firstProduct };
-};
+	return { productId: params.productId, productBasics: firstProduct }
+}

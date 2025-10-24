@@ -1,42 +1,42 @@
 <script lang="ts">
-	import { MoreHorizontal } from 'lucide-svelte';
-	import { deserialize } from '$app/forms';
-	import { goto, invalidateAll } from '$app/navigation';
-	import { Button } from '$lib/components/ui/button';
-	import * as Table from '$lib/components/ui/table';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import * as Drawer from '$lib/components/ui/drawer';
+import { MoreHorizontal } from 'lucide-svelte'
+import { deserialize } from '$app/forms'
+import { goto, invalidateAll } from '$app/navigation'
+import { Button } from '$lib/components/ui/button'
+import * as Drawer from '$lib/components/ui/drawer'
+import * as DropdownMenu from '$lib/components/ui/dropdown-menu'
+import * as Table from '$lib/components/ui/table'
 
-	export let data;
+export let data
 
-	async function handleSetStatus(stripeOrderId: string, status: string) {
-		const formData = new FormData();
+async function handleSetStatus(stripeOrderId: string, status: string) {
+	const formData = new FormData()
 
-		formData.append('stripeOrderId', stripeOrderId);
-		formData.append('status', status);
+	formData.append('stripeOrderId', stripeOrderId)
+	formData.append('status', status)
 
-		const response = await fetch(`/admin/orders?/setStatus`, {
-			method: 'POST',
-			body: formData
-		});
+	const response = await fetch(`/admin/orders?/setStatus`, {
+		method: 'POST',
+		body: formData
+	})
 
-		const result = deserialize(await response.text());
+	const result = deserialize(await response.text())
 
-		if (result.type === 'success') {
-			// rerun all `load` functions, following the successful update
-			await invalidateAll();
-		}
+	if (result.type === 'success') {
+		// rerun all `load` functions, following the successful update
+		await invalidateAll()
 	}
+}
 
-	function truncateString(str: string, maxLength: number) {
-		if (str.length > maxLength) {
-			return str.slice(0, maxLength) + '...';
-		}
-		return str;
+function truncateString(str: string, maxLength: number) {
+	if (str.length > maxLength) {
+		return str.slice(0, maxLength) + '...'
 	}
+	return str
+}
 
-	let openCustomerViewIdx = -1;
-	$: customerViewOpen = openCustomerViewIdx >= 0;
+let openCustomerViewIdx = -1
+$: customerViewOpen = openCustomerViewIdx >= 0
 </script>
 
 <div class="rounded-md grow p-4">

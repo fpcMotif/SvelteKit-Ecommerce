@@ -1,18 +1,17 @@
-import { lucia } from '$lib/server/auth';
-import { fail, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit'
+import { isDevAuthEnabled } from '$lib/server/auth/env'
+import { clearDevSession } from '$lib/server/auth/mock'
 
 export const GET = async (event) => {
-	if (!event.locals.session) {
-		fail(401);
+	if (isDevAuthEnabled()) {
+		clearDevSession(event)
+		return redirect(302, '/auth/login')
 	}
-	const session = event.locals.session;
-	if (session) {
-		lucia.invalidateSession(session.id);
-		const sessionCookie = lucia.createBlankSessionCookie();
-		event.cookies.set(sessionCookie.name, sessionCookie.value, {
-			path: '.',
-			...sessionCookie.attributes
-		});
-	}
-	return redirect(302, '/auth/login');
-};
+
+	// Clear Convex Auth JWT cookie
+	event.cookies.delete('__convexAuthJWT', {
+		path: '/'
+	})
+
+	return redirect(302, '/auth/login')
+}

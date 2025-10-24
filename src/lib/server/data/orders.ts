@@ -1,41 +1,39 @@
-import { generateId } from 'lucia';
-import { db } from '../db';
-import { order, orderProduct } from '../db/schema';
+import { api } from '../../../convex/_generated/api'
+import { convexHttp } from '../convex'
 
 export const fetchAllOrders = async (take?: number, skip?: number) => {
-	const orders = await db
-		.select()
-		.from(order)
-		.offset(skip ?? 0)
-		.limit(take ?? 10);
+	const orders = await convexHttp.query(api.orders.list, {
+		limit: take ?? 10
+	})
 
-	return orders;
-};
+	// Skip orders if needed (Convex doesn't have built-in skip, so we slice)
+	if (skip) {
+		return orders.slice(skip)
+	}
+
+	return orders
+}
 
 export const createNewOrder = async (data: {
-	orderId: string;
-	customerId: string | null;
-	totalPrice: number;
+	userId: string
+	orderId: string
+	customerId: string | null
+	totalPrice: number
+	items: Array<{
+		productId: string
+		productSizeCode: string
+		quantity: number
+		priceCents: number
+	}>
 }) => {
-	await db.insert(order).values({
+	const convexOrderId = await convexHttp.mutation(api.orders.create, {
+		userId: data.userId,
 		stripeOrderId: data.orderId,
-		stripeCustomerId: data.customerId,
+		stripeCustomerId: data.customerId ?? undefined,
 		totalPrice: data.totalPrice,
-		timestamp: new Date()
-	});
+		items: data.items as any,
+		status: 'placed'
+	})
 
-	return data.orderId;
-};
-
-export const createNewOrderProduct = async (data: {
-	orderId: string;
-	productSizeCode: string;
-	quantity: number;
-	status: 'placed' | 'fulfilled';
-}) => {
-	const id = generateId(20);
-
-	await db.insert(orderProduct).values({ ...data, id });
-
-	return id;
-};
+	return convexOrderId
+}

@@ -1,34 +1,34 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button';
-	import * as Table from '$lib/components/ui/table';
-	import * as Alert from '$lib/components/ui/alert';
-	import * as AlertDialog from '$lib/components/ui/alert-dialog';
-	import { Trash, Edit, PlusSquare } from 'lucide-svelte';
-	import { fade } from 'svelte/transition';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
+import { Edit, PlusSquare, Trash } from 'lucide-svelte'
+import { fade } from 'svelte/transition'
+import * as Alert from '$lib/components/ui/alert'
+import * as AlertDialog from '$lib/components/ui/alert-dialog'
+import { Button } from '$lib/components/ui/button'
+import { Input } from '$lib/components/ui/input'
+import { Label } from '$lib/components/ui/label'
+import * as Table from '$lib/components/ui/table'
 
-	export let data;
+export let data
 
-	let showAlertSuccessDelete = false;
+let showAlertSuccessDelete = false
 
-	const deleteItem = (productId: string, idx: number) => {
-		fetch(`/admin/products?productId=${productId}`, {
-			method: 'DELETE'
-		}).then((res) => {
-			if (res.status === 200) {
-				const copy = data.products;
-				copy.splice(idx, 1);
-				data.products = copy;
-				showAlertSuccessDelete = true;
-				setTimeout(() => {
-					showAlertSuccessDelete = false;
-				}, 3000);
-			} else {
-				alert('something went wrong...');
-			}
-		});
-	};
+const deleteItem = (productId: string, idx: number) => {
+	fetch(`/admin/products?productId=${productId}`, {
+		method: 'DELETE'
+	}).then((res) => {
+		if (res.status === 200) {
+			const copy = data.products
+			copy.splice(idx, 1)
+			data.products = copy
+			showAlertSuccessDelete = true
+			setTimeout(() => {
+				showAlertSuccessDelete = false
+			}, 3000)
+		} else {
+			alert('something went wrong...')
+		}
+	})
+}
 </script>
 
 <div class="p-4 flex flex-col justify-between h-full">

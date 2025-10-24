@@ -1,21 +1,21 @@
 <script lang="ts">
-	import { CldImage } from 'svelte-cloudinary';
-	import { ChevronRight } from 'lucide-svelte';
+import { ChevronRight } from 'lucide-svelte'
+import { CldImage } from 'svelte-cloudinary'
 
-	export let collectionData: {
-		name: string;
-		tagLine: string;
-		productInfo: {
-			cloudinaryId: string | null;
-			secondaryCloudinary: string | null;
-			name: string;
-			availableSizes: string[];
-			soldOutSizes: string[];
-			link: string;
-		}[];
-		dark: boolean;
-		collectionTag: string;
-	};
+export let collectionData: {
+	name: string
+	tagLine: string
+	productInfo: {
+		cloudinaryId: string | null
+		secondaryCloudinary: string | null
+		name: string
+		availableSizes: string[]
+		soldOutSizes: string[]
+		link: string
+	}[]
+	dark: boolean
+	collectionTag: string
+}
 </script>
 
 <div

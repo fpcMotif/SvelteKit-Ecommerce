@@ -1,22 +1,18 @@
-import { db } from '$lib/server/db/index.js';
-import { emailList } from '$lib/server/db/schema.js';
-import { error, redirect } from '@sveltejs/kit';
-import { and, eq } from 'drizzle-orm';
+import { error, redirect } from '@sveltejs/kit'
+import { convexHttp } from '$lib/server/convex'
+import { api } from '../../../../../convex/_generated/api'
 
 export const GET = async ({ url }) => {
-	const key = url.searchParams.get('key');
-	const email = url.searchParams.get('email');
+	const key = url.searchParams.get('key')
+	const email = url.searchParams.get('email')
 
 	if (!key || !email) {
-		error(400, 'missing key and/or email...');
+		error(400, 'missing key and/or email...')
 	}
 
-	await db
-		.update(emailList)
-		.set({
-			unsubscribedAt: new Date()
-		})
-		.where(and(eq(emailList.email, email), eq(emailList.key, key)));
+	await convexHttp.mutation(api.emailList.unsubscribe, {
+		email
+	})
 
-	return redirect(303, '/status/list/removed');
-};
+	return redirect(303, '/status/list/removed')
+}

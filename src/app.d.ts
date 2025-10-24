@@ -4,12 +4,24 @@ declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			user: import('lucia').User | null;
-			session: import('lucia').Session | null;
+			user: {
+				id: string
+				firstName: string
+				lastName: string
+				email: string
+				isAdmin: boolean
+				stripeCustomerId: string | null
+			} | null
+			session: {
+				id: string
+				userId: string
+				expiresAt: Date
+				fresh: boolean
+			} | null
 		}
 		// interface PageData {}
 		// interface Platform {}
 	}
 }
 
-export {};
+export {}

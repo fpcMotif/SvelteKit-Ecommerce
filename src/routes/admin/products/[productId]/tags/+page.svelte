@@ -1,127 +1,127 @@
 <script lang="ts">
-	import { deserialize, enhance } from '$app/forms';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import * as Table from '$lib/components/ui/table';
-	import { Plus, Trash, Pencil, MinusCircle } from 'lucide-svelte';
-	import { invalidateAll } from '$app/navigation';
-	import { Button } from '$lib/components/ui/button';
-	import * as Tooltip from '$lib/components/ui/tooltip';
-	import * as AlertDialog from '$lib/components/ui/alert-dialog';
-	import * as Sheet from '$lib/components/ui/sheet';
-	import { Textarea } from '$lib/components/ui/textarea';
+import { MinusCircle, Pencil, Plus, Trash } from 'lucide-svelte'
+import { deserialize, enhance } from '$app/forms'
+import { invalidateAll } from '$app/navigation'
+import * as AlertDialog from '$lib/components/ui/alert-dialog'
+import { Button } from '$lib/components/ui/button'
+import { Input } from '$lib/components/ui/input'
+import { Label } from '$lib/components/ui/label'
+import * as Sheet from '$lib/components/ui/sheet'
+import * as Table from '$lib/components/ui/table'
+import { Textarea } from '$lib/components/ui/textarea'
+import * as Tooltip from '$lib/components/ui/tooltip'
 
-	export let data;
+export let data
 
-	let selectedEditTagIdx = -1;
+let selectedEditTagIdx = -1
 
-	let debounceTimer: NodeJS.Timeout | undefined;
+let debounceTimer: NodeJS.Timeout | undefined
 
-	let searchQuery = '';
+let searchQuery = ''
 
-	let searchedTagsResult: {
-		tagName: string;
-	}[] = [];
+let searchedTagsResult: {
+	tagName: string
+}[] = []
 
-	// this feels really stupid...
-	$: searchQuery !== '' && handleInputChange(searchQuery);
+// this feels really stupid...
+$: searchQuery !== '' && handleInputChange(searchQuery)
 
-	function handleInputChange(query: string) {
-		clearTimeout(debounceTimer);
+function handleInputChange(query: string) {
+	clearTimeout(debounceTimer)
 
-		debounceTimer = setTimeout(() => {
-			handleSearch(query);
-		}, 400);
+	debounceTimer = setTimeout(() => {
+		handleSearch(query)
+	}, 400)
+}
+
+async function handleRemoveTagFromProduct(tagName: string) {
+	const formData = new FormData()
+
+	formData.append('tagName', tagName)
+
+	const response = await fetch(`/admin/products/${data.productId}/tags?/removeTagFromProduct`, {
+		method: 'POST',
+		body: formData
+	})
+
+	const result = deserialize(await response.text())
+
+	if (result.type === 'success') {
+		invalidateAll()
 	}
+}
 
-	async function handleRemoveTagFromProduct(tagName: string) {
-		const formData = new FormData();
+async function handleDeleteTag(tagName: string) {
+	const formData = new FormData()
 
-		formData.append('tagName', tagName);
+	formData.append('tagName', tagName)
 
-		const response = await fetch(`/admin/products/${data.productId}/tags?/removeTagFromProduct`, {
-			method: 'POST',
-			body: formData
-		});
+	const response = await fetch(`/admin/products/${data.productId}/tags?/deleteTag`, {
+		method: 'POST',
+		body: formData
+	})
 
-		const result = deserialize(await response.text());
+	const result = deserialize(await response.text())
 
-		if (result.type === 'success') {
-			invalidateAll();
-		}
+	if (result.type === 'success') {
+		invalidateAll()
 	}
+}
 
-	async function handleDeleteTag(tagName: string) {
-		const formData = new FormData();
+async function handleCreateNewTag(tagName: string) {
+	const formData = new FormData()
 
-		formData.append('tagName', tagName);
+	formData.append('tagName', tagName)
 
-		const response = await fetch(`/admin/products/${data.productId}/tags?/deleteTag`, {
-			method: 'POST',
-			body: formData
-		});
+	const response = await fetch(`/admin/products/${data.productId}/tags?/createNewTag`, {
+		method: 'POST',
+		body: formData
+	})
 
-		const result = deserialize(await response.text());
+	const result = deserialize(await response.text())
 
-		if (result.type === 'success') {
-			invalidateAll();
-		}
+	if (result.type === 'success') {
+		invalidateAll()
 	}
+}
 
-	async function handleCreateNewTag(tagName: string) {
-		const formData = new FormData();
+async function handleAddTagToProduct(tagName: string) {
+	const formData = new FormData()
 
-		formData.append('tagName', tagName);
+	formData.append('tagName', tagName)
 
-		const response = await fetch(`/admin/products/${data.productId}/tags?/createNewTag`, {
-			method: 'POST',
-			body: formData
-		});
+	const response = await fetch(`/admin/products/${data.productId}/tags?/addTagToProduct`, {
+		method: 'POST',
+		body: formData
+	})
 
-		const result = deserialize(await response.text());
+	const result = deserialize(await response.text())
 
-		if (result.type === 'success') {
-			invalidateAll();
-		}
+	if (result.type === 'success') {
+		searchQuery = ''
+		invalidateAll()
 	}
+}
 
-	async function handleAddTagToProduct(tagName: string) {
-		const formData = new FormData();
+async function handleSearch(query: string) {
+	const formData = new FormData()
 
-		formData.append('tagName', tagName);
+	formData.append('query', query)
 
-		const response = await fetch(`/admin/products/${data.productId}/tags?/addTagToProduct`, {
-			method: 'POST',
-			body: formData
-		});
+	const response = await fetch(`/admin/products/${data.productId}/tags?/search`, {
+		method: 'POST',
+		body: formData
+	})
 
-		const result = deserialize(await response.text());
+	const result = deserialize(await response.text())
 
-		if (result.type === 'success') {
-			searchQuery = '';
-			invalidateAll();
-		}
+	if (result.type === 'success') {
+		// grab the search results
+		const { tags } = result.data as { tags: { tagName: string }[] }
+
+		searchedTagsResult = tags
 	}
-
-	async function handleSearch(query: string) {
-		const formData = new FormData();
-
-		formData.append('query', query);
-
-		const response = await fetch(`/admin/products/${data.productId}/tags?/search`, {
-			method: 'POST',
-			body: formData
-		});
-
-		const result = deserialize(await response.text());
-
-		if (result.type === 'success') {
-			// grab the search results
-			const { tags } = result.data as { tags: { tagName: string }[] };
-
-			searchedTagsResult = tags;
-		}
-	}
+}
 </script>
 
 <div class="w-full h-full flex flex-col">

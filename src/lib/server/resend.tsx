@@ -1,10 +1,10 @@
-import { env } from '$env/dynamic/private';
-import { Resend } from 'resend';
-import { SedimentListThankYou } from '$lib/emails/sediment-list-thank-you';
-import { SedimentPurchaseThankYou } from '$lib/emails/sediment-purchase-thank-you';
-import * as React from 'react';
+import * as React from 'react'
+import { Resend } from 'resend'
+import { env } from '$env/dynamic/private'
+import { SedimentListThankYou } from '$lib/emails/sediment-list-thank-you'
+import { SedimentPurchaseThankYou } from '$lib/emails/sediment-purchase-thank-you'
 
-export const resend = new Resend(env.RESEND_API_KEY);
+export const resend = new Resend(env.RESEND_API_KEY)
 
 export const sendThankYouListEmail = async (email: string, key: string) => {
 	try {
@@ -13,12 +13,12 @@ export const sendThankYouListEmail = async (email: string, key: string) => {
 			to: email,
 			subject: 'Welcome to Sediment Art',
 			react: <SedimentListThankYou email={email} unsubKey={key} />
-		});
-		console.log('sent');
+		})
+		console.log('sent')
 	} catch (e) {
-		console.log('error sending:', e);
+		console.log('error sending:', e)
 	}
-};
+}
 
 export const sendThankYouPurchaseEmail = async (email: string) => {
 	try {
@@ -27,9 +27,9 @@ export const sendThankYouPurchaseEmail = async (email: string) => {
 			to: email,
 			subject: 'Sediment Art: Thank you for your order!',
 			react: <SedimentPurchaseThankYou />
-		});
-		console.log('sent');
+		})
+		console.log('sent')
 	} catch (e) {
-		console.log('error sending:', e);
+		console.log('error sending:', e)
 	}
-};
+}

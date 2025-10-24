@@ -1,12 +1,10 @@
-import { drizzle } from 'drizzle-orm/planetscale-serverless';
-import * as schema from './schema';
-import { connect } from '@planetscale/database';
-import { env } from '$env/dynamic/private';
+// Temporary placeholder - This file is deprecated
+// Use Convex instead of Drizzle ORM
+// Import: import { convexHttp } from '$lib/server/convex'
+// API: import { api } from '../../../convex/_generated/api'
 
-const connection = connect({
-	host: env.DATABASE_HOST,
-	username: env.DATABASE_USERNAME,
-	password: env.DATABASE_PASSWORD
-});
-
-export const db = drizzle(connection, { schema });
+throw new Error(
+	'This database module is deprecated. Use Convex API instead.\n' +
+		'Import convexHttp: import { convexHttp } from "$lib/server/convex"\n' +
+		'Import API: import { api } from "../../../convex/_generated/api"'
+)
