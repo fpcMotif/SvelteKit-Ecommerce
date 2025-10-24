@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit'
 import * as Effect from 'effect/Effect'
 import { query } from '$lib/effect/convex'
-import { runPromise } from '$lib/effect/runtime'
+import { runPromiseLayer } from '$lib/effect/runtime'
 import { api } from '../../../../convex/_generated/api'
 
 export const load = async ({ params }) => {
@@ -22,5 +22,5 @@ export const load = async ({ params }) => {
 		}
 	})
 
-	return await runPromise(program)
+	return await runPromiseLayer(program)
 }

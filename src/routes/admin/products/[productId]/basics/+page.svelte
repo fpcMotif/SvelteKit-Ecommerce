@@ -12,7 +12,6 @@ import { Textarea } from '$lib/components/ui/textarea'
 export let data
 
 let disableUpdate = true
-
 let showSuccess = false
 </script>
 
@@ -22,18 +21,18 @@ let showSuccess = false
 	use:enhance={() => {
 		return ({ result }) => {
 			if (result.type === 'success') {
-				showSuccess = true;
-				disableUpdate = true;
-				invalidateAll();
+				showSuccess = true
+				disableUpdate = true
+				invalidateAll()
 				setTimeout(() => {
-					showSuccess = false;
-				}, 3000);
+					showSuccess = false
+				}, 3000)
 			}
 
 			if (result.type === 'error') {
-				console.error(result.error);
+				console.error(result.error)
 			}
-		};
+		}
 	}}
 >
 	<h2 class="text-neutral-900 text-3xl font-bold">Update Product</h2>
@@ -47,7 +46,7 @@ let showSuccess = false
 			type="text"
 			placeholder="My Product"
 			value={data.productBasics.name}
-			on:change={() => (disableUpdate = false)}
+			onchange={() => (disableUpdate = false)}
 		/>
 	</div>
 
@@ -55,7 +54,7 @@ let showSuccess = false
 		<Label for="desc">Description</Label>
 		<Textarea
 			name="desc"
-			on:change={() => (disableUpdate = false)}
+			onchange={() => (disableUpdate = false)}
 			id="desc"
 			class="w-[600px]"
 			required

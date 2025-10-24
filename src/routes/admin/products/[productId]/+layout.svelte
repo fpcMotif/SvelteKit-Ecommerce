@@ -1,9 +1,17 @@
-<script>
+<script lang="ts">
+import { Grid2X2, Image, LayoutGrid, Tag } from 'lucide-svelte'
 import { goto } from '$app/navigation'
 import * as Tabs from '$lib/components/ui/tabs'
-export let data
 
-import { GanttChart, Grid2X2, Image, Tag } from 'lucide-svelte'
+export let data: {
+	url: string
+	productId: string
+	productBasics: { name: string }
+} = {
+	url: '',
+	productId: '',
+	productBasics: { name: '' }
+}
 
 $: value = data.url.split('/').pop()
 </script>
@@ -12,21 +20,22 @@ $: value = data.url.split('/').pop()
 	<h2 class="pb-2 italic font-light text-lg">{data.productBasics.name}</h2>
 	<Tabs.Root {value} class="pb-4">
 		<Tabs.List>
-			<Tabs.Trigger on:click={() => goto(`/admin/products/${data.productId}/basics`)} value="basics"
-				><GanttChart class="w-4 h-4 mr-2" /> basics</Tabs.Trigger
-			>
-			<Tabs.Trigger on:click={() => goto(`/admin/products/${data.productId}/images`)} value="images"
-				><Image class="w-4 h-4 mr-2" />images</Tabs.Trigger
-			>
+		<Tabs.Trigger onclick={() => goto(`/admin/products/${data.productId}/basics`)} value="basics">
+			<LayoutGrid class="w-4 h-4 mr-2" /> basics
+		</Tabs.Trigger>
+			<Tabs.Trigger onclick={() => goto(`/admin/products/${data.productId}/images`)} value="images">
+				<Image class="w-4 h-4 mr-2" />images
+			</Tabs.Trigger>
 
-			<Tabs.Trigger on:click={() => goto(`/admin/products/${data.productId}/tags`)} value="tags"
-				><Tag class="w-4 h-4 mr-2" /> tags</Tabs.Trigger
-			>
-			<Tabs.Trigger on:click={() => goto(`/admin/products/${data.productId}/sizes`)} value="sizes"
-				><Grid2X2 class="w-4 h-4 mr-2" /> sizes</Tabs.Trigger
-			>
+			<Tabs.Trigger onclick={() => goto(`/admin/products/${data.productId}/tags`)} value="tags">
+				<Tag class="w-4 h-4 mr-2" /> tags
+			</Tabs.Trigger>
+			<Tabs.Trigger onclick={() => goto(`/admin/products/${data.productId}/sizes`)} value="sizes">
+				<Grid2X2 class="w-4 h-4 mr-2" /> sizes
+			</Tabs.Trigger>
 		</Tabs.List>
 	</Tabs.Root>
 
 	<slot />
 </div>
+

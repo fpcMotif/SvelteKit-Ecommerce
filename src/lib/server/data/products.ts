@@ -1,5 +1,6 @@
 import { convexHttp } from '$lib/server/convex'
-import { api } from '../../../convex/_generated/api'
+// @ts-ignore - Convex generates .d.ts files which TypeScript struggles to resolve
+import { api } from '../../../../convex/_generated/api'
 
 export const deleteOneProduct = async (id: string) => {
 	return await convexHttp.mutation(api.products.remove, { id })

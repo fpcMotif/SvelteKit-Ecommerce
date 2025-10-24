@@ -7,7 +7,7 @@ import * as Drawer from '$lib/components/ui/drawer'
 import * as DropdownMenu from '$lib/components/ui/dropdown-menu'
 import * as Table from '$lib/components/ui/table'
 
-export let data
+let { data } = $props()
 
 async function handleSetStatus(stripeOrderId: string, status: string) {
 	const formData = new FormData()
@@ -35,8 +35,14 @@ function truncateString(str: string, maxLength: number) {
 	return str
 }
 
-let openCustomerViewIdx = -1
-$: customerViewOpen = openCustomerViewIdx >= 0
+let openCustomerViewIdx = $state(-1)
+let customerViewOpen = $derived(openCustomerViewIdx >= 0)
+
+$effect(() => {
+	if (!customerViewOpen) {
+		openCustomerViewIdx = -1
+	}
+})
 </script>
 
 <div class="rounded-md grow p-4">
@@ -63,17 +69,17 @@ $: customerViewOpen = openCustomerViewIdx >= 0
 								<DropdownMenu.Group>
 									<DropdownMenu.Label>set status</DropdownMenu.Label>
 									<DropdownMenu.Separator />
-									<DropdownMenu.Item on:click={() => handleSetStatus(order.stripeOrderId, 'new')}
+									<DropdownMenu.Item onclick={() => handleSetStatus(order.stripeOrderId, 'new')}
 										>new</DropdownMenu.Item
 									>
-									<DropdownMenu.Item on:click={() => handleSetStatus(order.stripeOrderId, 'placed')}
+									<DropdownMenu.Item onclick={() => handleSetStatus(order.stripeOrderId, 'placed')}
 										>placed</DropdownMenu.Item
 									>
 									<DropdownMenu.Item
-										on:click={() => handleSetStatus(order.stripeOrderId, 'packaged')}
+										onclick={() => handleSetStatus(order.stripeOrderId, 'packaged')}
 										>packaged</DropdownMenu.Item
 									>
-									<DropdownMenu.Item on:click={() => handleSetStatus(order.stripeOrderId, 'sent')}
+									<DropdownMenu.Item onclick={() => handleSetStatus(order.stripeOrderId, 'sent')}
 										>sent</DropdownMenu.Item
 									>
 								</DropdownMenu.Group>
@@ -86,10 +92,9 @@ $: customerViewOpen = openCustomerViewIdx >= 0
 
 					<Table.Cell>
 						<DropdownMenu.Root>
-							<DropdownMenu.Trigger asChild let:builder>
+							<DropdownMenu.Trigger>
 								<Button
 									variant="ghost"
-									builders={[builder]}
 									size="icon"
 									class="relative w-8 h-8 p-0"
 								>
@@ -101,21 +106,21 @@ $: customerViewOpen = openCustomerViewIdx >= 0
 								<DropdownMenu.Group>
 									<DropdownMenu.Label>Actions</DropdownMenu.Label>
 									<DropdownMenu.Item
-										on:click={() => navigator.clipboard.writeText(order.stripeOrderId)}
+										onclick={() => navigator.clipboard.writeText(order.stripeOrderId)}
 									>
 										Copy Stripe ID
 									</DropdownMenu.Item>
 								</DropdownMenu.Group>
 								<DropdownMenu.Separator />
 								<!-- VIEW CUSTOMER -->
-								<DropdownMenu.Item on:click={() => (openCustomerViewIdx = i)}>
+								<DropdownMenu.Item onclick={() => (openCustomerViewIdx = i)}>
 									view customer
 								</DropdownMenu.Item>
 								<!-- VIEW PAYMENT DETAILS -->
 								<DropdownMenu.Item>view payment details</DropdownMenu.Item>
 								<!-- VIEW PRODUCTS -->
 								<DropdownMenu.Item>view products</DropdownMenu.Item>
-								<DropdownMenu.Item on:click={() => goto(`/admin/orders/${order.stripeOrderId}`)}
+								<DropdownMenu.Item onclick={() => goto(`/admin/orders/${order.stripeOrderId}`)}
 									>order details</DropdownMenu.Item
 								>
 							</DropdownMenu.Content>
@@ -127,7 +132,7 @@ $: customerViewOpen = openCustomerViewIdx >= 0
 	</Table.Root>
 </div>
 
-<Drawer.Root bind:open={customerViewOpen} onClose={() => (openCustomerViewIdx = -1)}>
+<Drawer.Root bind:open={customerViewOpen}>
 	<Drawer.Content>
 		<Drawer.Header>
 			<Drawer.Title>Customer Info</Drawer.Title>

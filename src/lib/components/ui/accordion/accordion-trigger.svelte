@@ -4,7 +4,6 @@ import { ChevronDown } from 'lucide-svelte'
 import { cn } from '$lib/utils'
 
 type $$Props = AccordionPrimitive.TriggerProps
-type $$Events = AccordionPrimitive.TriggerEvents
 
 let className: $$Props['class'] = undefined
 export let level: AccordionPrimitive.HeaderProps['level'] = 3
@@ -18,7 +17,6 @@ export { className as class }
 			className
 		)}
 		{...$$restProps}
-		on:click
 	>
 		<slot />
 		<ChevronDown class="h-4 w-4 transition-transform duration-200" />

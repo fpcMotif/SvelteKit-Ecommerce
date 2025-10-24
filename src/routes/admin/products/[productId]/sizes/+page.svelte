@@ -9,7 +9,19 @@ import { Label } from '$lib/components/ui/label'
 import * as Sheet from '$lib/components/ui/sheet'
 import * as Table from '$lib/components/ui/table'
 
-export let data
+export let data: {
+	sizes: Array<{
+		code: string
+		name: string
+		width: number
+		height: number
+		price: number
+		stripePriceId: string
+		stripeProductId: string
+		isAvailable: boolean
+		productId: string
+	}>
+} = { sizes: [] }
 
 let openEditModal = false
 let editIdx: number | null = null
@@ -17,17 +29,16 @@ let editIdx: number | null = null
 let createOpen = false
 
 async function handleSubmitCreate(event: { currentTarget: EventTarget & HTMLFormElement }) {
-	const data = new FormData(event.currentTarget)
+	const formData = new FormData(event.currentTarget)
 
 	const response = await fetch(event.currentTarget.action, {
 		method: 'POST',
-		body: data
+		body: formData
 	})
 
 	const result = deserialize(await response.text())
 
 	if (result.type === 'success') {
-		// rerun all `load` functions, following the successful update
 		await invalidateAll()
 	}
 
@@ -37,17 +48,16 @@ async function handleSubmitCreate(event: { currentTarget: EventTarget & HTMLForm
 }
 
 async function handleSubmitDelete(event: { currentTarget: EventTarget & HTMLFormElement }) {
-	const data = new FormData(event.currentTarget)
+	const formData = new FormData(event.currentTarget)
 
 	const response = await fetch(event.currentTarget.action, {
 		method: 'POST',
-		body: data
+		body: formData
 	})
 
 	const result = deserialize(await response.text())
 
 	if (result.type === 'success') {
-		// rerun all `load` functions, following the successful update
 		await invalidateAll()
 	}
 
@@ -55,17 +65,16 @@ async function handleSubmitDelete(event: { currentTarget: EventTarget & HTMLForm
 }
 
 async function handleSubmitEdit(event: { currentTarget: EventTarget & HTMLFormElement }) {
-	const data = new FormData(event.currentTarget)
+	const formData = new FormData(event.currentTarget)
 
 	const response = await fetch(event.currentTarget.action, {
 		method: 'POST',
-		body: data
+		body: formData
 	})
 
 	const result = deserialize(await response.text())
 
 	if (result.type === 'success') {
-		// rerun all `load` functions, following the successful update
 		await invalidateAll()
 	}
 
@@ -76,25 +85,30 @@ async function handleSubmitEdit(event: { currentTarget: EventTarget & HTMLFormEl
 </script>
 
 <div class="w-full h-full flex flex-col p-4">
-	<div class="grow">
+	<div class="grow overflow-auto">
 		<Table.Root>
 			<Table.Header>
 				<Table.Row>
 					<Table.Head class="w-[100px]">Code</Table.Head>
+					<Table.Head>Name</Table.Head>
 					<Table.Head>Width</Table.Head>
 					<Table.Head>Height</Table.Head>
 					<Table.Head>Price</Table.Head>
+					<Table.Head>Available</Table.Head>
 					<Table.Head>Stripe Price ID</Table.Head>
 					<Table.Head>Stripe Product ID</Table.Head>
+					<Table.Head></Table.Head>
 				</Table.Row>
 			</Table.Header>
 			<Table.Body>
 				{#each data.sizes as size, i (i)}
 					<Table.Row>
 						<Table.Cell class="font-medium">{size.code}</Table.Cell>
+						<Table.Cell>{size.name}</Table.Cell>
 						<Table.Cell>{size.width}</Table.Cell>
 						<Table.Cell>{size.height}</Table.Cell>
 						<Table.Cell>{`$${(size.price / 100).toFixed(2)}`}</Table.Cell>
+						<Table.Cell>{size.isAvailable ? 'Yes' : 'No'}</Table.Cell>
 						<Table.Cell>{size.stripePriceId}</Table.Cell>
 						<Table.Cell>{size.stripeProductId}</Table.Cell>
 						<Table.Cell class="text-right">
@@ -108,7 +122,7 @@ async function handleSubmitEdit(event: { currentTarget: EventTarget & HTMLFormEl
 										<DropdownMenu.Separator />
 
 										<DropdownMenu.Item
-											on:click={() => {
+											onclick={() => {
 												editIdx = i;
 												openEditModal = true;
 											}}
@@ -120,7 +134,10 @@ async function handleSubmitEdit(event: { currentTarget: EventTarget & HTMLFormEl
 											<form
 												method="POST"
 												action="?/delete"
-												on:submit|preventDefault={handleSubmitDelete}
+												onsubmit={(e) => {
+													e.preventDefault();
+													handleSubmitDelete(e);
+												}}
 											>
 												<input type="text" name="code" id="code" value={size.code} class="hidden" />
 												<button type="submit" class="flex flex-row items-center w-full h-full">
@@ -138,7 +155,7 @@ async function handleSubmitEdit(event: { currentTarget: EventTarget & HTMLFormEl
 		</Table.Root>
 	</div>
 
-	<div class="w-full flex flex-row justify-end">
+	<div class="w-full flex flex-row justify-end pt-4">
 		<Sheet.Root bind:open={createOpen}>
 			<Sheet.Trigger>
 				<Button class="text-white bg-green-600"
@@ -154,7 +171,10 @@ async function handleSubmitEdit(event: { currentTarget: EventTarget & HTMLFormEl
 					class="flex flex-col gap-y-6"
 					method="POST"
 					action="?/create"
-					on:submit|preventDefault={handleSubmitCreate}
+					onsubmit={(e) => {
+						e.preventDefault();
+						handleSubmitCreate(e);
+					}}
 				>
 					<div class="gap-1.5 grid">
 						<Label for="code">Code</Label>
@@ -166,6 +186,11 @@ async function handleSubmitEdit(event: { currentTarget: EventTarget & HTMLFormEl
 							type="text"
 							placeholder="code_12_12"
 						/>
+					</div>
+
+					<div class="gap-1.5 grid">
+						<Label for="name">Name</Label>
+						<Input name="name" required id="name" class="w-full" type="text" placeholder="12x12" />
 					</div>
 
 					<div class="gap-1.5 grid">
@@ -186,7 +211,7 @@ async function handleSubmitEdit(event: { currentTarget: EventTarget & HTMLFormEl
 					</div>
 
 					<div class="gap-1.5 grid">
-						<Label for="price">Price</Label>
+						<Label for="price">Price (in cents)</Label>
 						<Input
 							name="price"
 							required
@@ -219,6 +244,11 @@ async function handleSubmitEdit(event: { currentTarget: EventTarget & HTMLFormEl
 							type="text"
 							placeholder="stripe1234..."
 						/>
+					</div>
+
+					<div class="gap-1.5 grid">
+						<Label for="isAvailable">Available</Label>
+						<input type="checkbox" name="isAvailable" id="isAvailable" checked />
 					</div>
 
 					<div class="flex flex-row justify-end">
@@ -255,7 +285,10 @@ async function handleSubmitEdit(event: { currentTarget: EventTarget & HTMLFormEl
 				class="flex flex-col gap-y-6"
 				method="POST"
 				action="?/edit"
-				on:submit|preventDefault={handleSubmitEdit}
+				onsubmit={(e) => {
+					e.preventDefault();
+					handleSubmitEdit(e);
+				}}
 			>
 				<div class="gap-1.5 grid">
 					<Label for="showCode">Code</Label>
@@ -270,6 +303,19 @@ async function handleSubmitEdit(event: { currentTarget: EventTarget & HTMLFormEl
 						value={data.sizes[editIdx].code}
 					/>
 					<input type="text" name="code" value={data.sizes[editIdx].code} class="hidden" />
+				</div>
+
+				<div class="gap-1.5 grid">
+					<Label for="name">Name</Label>
+					<Input
+						name="name"
+						required
+						id="name"
+						class="w-full"
+						type="text"
+						placeholder="12x12"
+						value={data.sizes[editIdx].name}
+					/>
 				</div>
 
 				<div class="gap-1.5 grid">
@@ -299,7 +345,7 @@ async function handleSubmitEdit(event: { currentTarget: EventTarget & HTMLFormEl
 				</div>
 
 				<div class="gap-1.5 grid">
-					<Label for="price">Price</Label>
+					<Label for="price">Price (in cents)</Label>
 					<Input
 						name="price"
 						required
@@ -337,6 +383,16 @@ async function handleSubmitEdit(event: { currentTarget: EventTarget & HTMLFormEl
 					/>
 				</div>
 
+				<div class="gap-1.5 grid">
+					<Label for="isAvailable">Available</Label>
+					<input
+						type="checkbox"
+						name="isAvailable"
+						id="isAvailable"
+						checked={data.sizes[editIdx].isAvailable}
+					/>
+				</div>
+
 				<div class="flex flex-row justify-end">
 					<Button type="submit">
 						<Edit class="w-4 h-4 mr-2" />
@@ -347,3 +403,4 @@ async function handleSubmitEdit(event: { currentTarget: EventTarget & HTMLFormEl
 		</Sheet.Content>
 	</Sheet.Root>
 {/if}
+

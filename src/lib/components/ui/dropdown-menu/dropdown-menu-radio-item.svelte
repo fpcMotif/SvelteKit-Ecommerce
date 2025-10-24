@@ -3,12 +3,11 @@ import { DropdownMenu as DropdownMenuPrimitive } from 'bits-ui'
 import { Circle } from 'lucide-svelte'
 import { cn } from '$lib/utils'
 
-type $$Props = DropdownMenuPrimitive.RadioItemProps
-type $$Events = DropdownMenuPrimitive.RadioItemEvents
+type Props = DropdownMenuPrimitive.RadioItemProps & {
+	children?: import('svelte').Snippet
+}
 
-let className: $$Props['class'] = undefined
-export let value: $$Props['value']
-export { className as class }
+let { class: className, value, children, ...restProps }: Props = $props()
 </script>
 
 <DropdownMenuPrimitive.RadioItem
@@ -17,19 +16,12 @@ export { className as class }
 		className
 	)}
 	{value}
-	{...$$restProps}
-	on:click
-	on:keydown
-	on:focusin
-	on:focusout
-	on:pointerdown
-	on:pointerleave
-	on:pointermove
+	{...restProps}
 >
 	<span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-		<DropdownMenuPrimitive.RadioIndicator>
+		{#if value}
 			<Circle class="h-2 w-2 fill-current" />
-		</DropdownMenuPrimitive.RadioIndicator>
+		{/if}
 	</span>
-	<slot />
+	{@render children?.()}
 </DropdownMenuPrimitive.RadioItem>

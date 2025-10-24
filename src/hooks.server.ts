@@ -30,7 +30,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	try {
 		// Fetch user from Convex using the auth token
-		const user = await convexHttp.query(api.users.getByExternalId, { externalId: token }, { token })
+		const user = await convexHttp.query(api.users.getByExternalId, { externalId: token })
 
 		if (user) {
 			event.locals.user = {

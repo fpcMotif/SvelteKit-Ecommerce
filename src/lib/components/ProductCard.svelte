@@ -1,77 +1,74 @@
 <script lang="ts">
-  import { Link } from "lucide-svelte";
-  import { CldImage } from "svelte-cloudinary";
-  import { goto, preloadData, pushState } from "$app/navigation";
-  import { addToCart } from "$lib/client/cart";
-  import Button from "./ui/button/button.svelte";
-  import * as Drawer from "./ui/drawer";
+import { Link } from 'lucide-svelte'
+import { CldImage } from 'svelte-cloudinary'
+import { goto, preloadData, pushState } from '$app/navigation'
+import { addToCart } from '$lib/client/cart'
+import Button from './ui/button/button.svelte'
+import * as Drawer from './ui/drawer'
 
-  export let itemData: {
-    name: string;
-    productId: string;
-    cloudinaryId: string | null;
-    tags: string[];
-    selectTag: (tagName: string) => void;
-    displayMode: string;
-    desc: string;
-    sizes: {
-      code: string;
-      height: number;
-      name: string;
-      width: number;
-      productId: string;
-      isAvailable: boolean;
-      price: number;
-      stripePriceId: string;
-      stripeProductId: string;
-    }[];
-  } = {
-    name: "",
-    productId: "",
-    cloudinaryId: null,
-    tags: [],
-    selectTag: () => {},
-    displayMode: "lg",
-    desc: "",
-    sizes: [],
-  };
+export let itemData: {
+	name: string
+	productId: string
+	cloudinaryId: string | null
+	tags: string[]
+	selectTag: (tagName: string) => void
+	displayMode: string
+	desc: string
+	sizes: {
+		code: string
+		height: number
+		name: string
+		width: number
+		productId: string
+		isAvailable: boolean
+		price: number
+		stripePriceId: string
+		stripeProductId: string
+	}[]
+} = {
+	name: '',
+	productId: '',
+	cloudinaryId: null,
+	tags: [],
+	selectTag: () => {},
+	displayMode: 'lg',
+	desc: '',
+	sizes: []
+}
 
-  const handleAddedToCart = () => {
-    const el = document.getElementById("added-to-cart");
-    el?.classList.remove("hidden");
-    setTimeout(() => {
-      el?.classList.add("hidden");
-    }, 4000);
-  };
+const handleAddedToCart = () => {
+	const el = document.getElementById('added-to-cart')
+	el?.classList.remove('hidden')
+	setTimeout(() => {
+		el?.classList.add('hidden')
+	}, 4000)
+}
 
-  let selectedSizeIdx = 0;
-  while (
-    selectedSizeIdx < itemData.sizes.length &&
-    !itemData.sizes[selectedSizeIdx].isAvailable
-  )
-    selectedSizeIdx++;
+let selectedSizeIdx = 0
+while (selectedSizeIdx < itemData.sizes.length && !itemData.sizes[selectedSizeIdx].isAvailable)
+	selectedSizeIdx++
 
-  // ripped straight from the docs lol: https://kit.svelte.dev/docs/shallow-routing
-  async function navigate(e: any) {
-    // bail if opening a new tab, or we're on too small a screen
-    if (e.metaKey || innerWidth < 640) return;
+// ripped straight from the docs lol: https://kit.svelte.dev/docs/shallow-routing
+async function navigate(e: any) {
+	// bail if opening a new tab, or we're on too small a screen
+	if (e.metaKey || innerWidth < 640) return
 
-    // prevent navigation
-    e.preventDefault();
+	// prevent navigation
+	e.preventDefault()
 
-    const { href } = e.currentTarget;
+	const { href } = e.currentTarget
 
-    // run `load` functions (or rather, get the result of the `load` functions
-    // that are already running because of `data-sveltekit-preload-data`)
-    const result = await preloadData(href);
+	// run `load` functions (or rather, get the result of the `load` functions
+	// that are already running because of `data-sveltekit-preload-data`)
+	const result = await preloadData(href)
 
-    if (result.type === "loaded" && result.status === 200) {
-      pushState(href, { selected: result.data });
-    } else {
-      // something bad happened! try navigating
-      goto(href);
-    }
-  }
+	if (result.type === 'loaded' && result.status === 200) {
+		pushState(href, { selected: result.data })
+	} else {
+		// something bad happened! try navigating
+		goto(href)
+	}
+}
 </script>
 
 <div

@@ -1,9 +1,8 @@
 import { error } from '@sveltejs/kit'
-import { eq } from 'drizzle-orm'
 import { zfd } from 'zod-form-data'
 import { ensureAdmin } from '$lib/server/auth'
-import { db } from '$lib/server/db/index.js'
-import { product } from '$lib/server/db/schema.js'
+import { convexHttp } from '$lib/server/convex'
+import { api } from '../../../../../../convex/_generated/api'
 
 export const actions = {
 	default: async ({ locals, request, params }) => {
@@ -22,13 +21,14 @@ export const actions = {
 			error(400, res.error.name)
 		}
 
-		await db
-			.update(product)
-			.set({
+		await convexHttp.mutation(api.products.update, {
+			id: params.productId,
+			patch: {
 				name: res.data.name,
-				desc: res.data.desc
-			})
-			.where(eq(product.id, params.productId))
+				desc: res.data.desc,
+				slug: res.data.name.toLowerCase().replace(/\s+/g, '-')
+			}
+		})
 
 		return { success: true }
 	}

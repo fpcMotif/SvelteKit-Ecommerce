@@ -1,15 +1,26 @@
 <script lang="ts">
 import { Crown, FolderKanban, ToggleRight, Trash } from 'lucide-svelte'
-import { CldImage, CldUploadButton, CldUploadWidget } from 'svelte-cloudinary'
+import { CldImage, CldUploadButton } from 'svelte-cloudinary'
 import { deserialize, enhance } from '$app/forms'
 import { invalidateAll } from '$app/navigation'
 import { env } from '$env/dynamic/public'
 import { Button } from '$lib/components/ui/button'
 import * as DropdownMenu from '$lib/components/ui/dropdown-menu'
 
-export let data
+export let data: {
+	productId: string
+	images: Array<{
+		cloudinaryId: string
+		isVertical: boolean
+		isPrimary: boolean
+		width: number
+		height: number
+	}>
+} = {
+	productId: '',
+	images: []
+}
 
-// TODO type this up
 async function handleSubmit(info: unknown) {
 	const { public_id, width, height } = info as {
 		public_id: string
@@ -31,7 +42,6 @@ async function handleSubmit(info: unknown) {
 	const result = deserialize(await response.text())
 
 	if (result.type === 'success') {
-		// rerun all `load` functions, following the successful update
 		await invalidateAll()
 	}
 }
@@ -63,8 +73,8 @@ async function handleSubmit(info: unknown) {
 						<DropdownMenu.Group class="p-2">
 							<DropdownMenu.Label>Manage Image</DropdownMenu.Label>
 							<DropdownMenu.Separator />
-							<DropdownMenu.Item asChild>
-								<form method="POST" action="?/markPrimary" class="py-1">
+							<DropdownMenu.Item>
+								<form method="POST" action="?/markPrimary" use:enhance class="py-1">
 									<input type="hidden" name="cloudinaryId" value={image.cloudinaryId} />
 									<Button
 										size="sm"
@@ -77,8 +87,8 @@ async function handleSubmit(info: unknown) {
 									</Button>
 								</form>
 							</DropdownMenu.Item>
-							<DropdownMenu.Item asChild>
-								<form method="POST" action="?/toggleVertical" class="py-1">
+							<DropdownMenu.Item>
+								<form method="POST" action="?/toggleVertical" use:enhance class="py-1">
 									<input type="hidden" name="cloudinaryId" value={image.cloudinaryId} />
 									<Button size="sm" type="submit" class="flex w-full justify-start">
 										<ToggleRight class="w-4 h-4 mr-2" />
@@ -86,7 +96,7 @@ async function handleSubmit(info: unknown) {
 									</Button>
 								</form>
 							</DropdownMenu.Item>
-							<DropdownMenu.Item asChild>
+							<DropdownMenu.Item>
 								<form method="POST" use:enhance action="?/delete" class="py-1">
 									<input type="hidden" name="cloudinaryId" value={image.cloudinaryId} />
 									<Button

@@ -1,6 +1,6 @@
 import * as Effect from 'effect/Effect'
 import { query } from '$lib/effect/convex'
-import { runPromise } from '$lib/effect/runtime'
+import { runPromiseLayer } from '$lib/effect/runtime'
 import { api } from '../../../convex/_generated/api'
 
 export const load = async ({ url }) => {
@@ -34,5 +34,5 @@ export const load = async ({ url }) => {
 		}
 	})
 
-	return await runPromise(program)
+	return await runPromiseLayer(program)
 }

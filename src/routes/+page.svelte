@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { CldImage } from "svelte-cloudinary";
-  import MobileLogo from "$lib/client/images/mobile_logo.png";
-  import ImageCollection from "$lib/components/ImageCollection.svelte";
+import { CldImage } from 'svelte-cloudinary'
+import MobileLogo from '$lib/client/images/mobile_logo.png'
+import ImageCollection from '$lib/components/ImageCollection.svelte'
 
-  export let data;
+export let data
 </script>
 
 <main class="grow">

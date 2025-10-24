@@ -84,4 +84,3 @@ export function readDevSession(event: RequestEvent): DevAuthData | null {
 		return null
 	}
 }
-

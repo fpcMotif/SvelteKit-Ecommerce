@@ -3,7 +3,40 @@ import { CldImage, CldOgImage } from 'svelte-cloudinary'
 import { addToCart } from '$lib/client/cart'
 import Button from '$lib/components/ui/button/button.svelte'
 
-export let data
+export let data: {
+	product: {
+		id: string
+		name: string
+		desc: string
+		gradientColorStart: string
+		gradientColorVia: string
+		gradientColorStop: string
+		images: Array<{ cloudinaryId: string }>
+		sizes: Array<{
+			name: string
+			width: number
+			height: number
+			price: number
+			code: string
+			stripePriceId: string
+			isAvailable: boolean
+		}>
+	}
+	primaryImage?: { cloudinaryId: string }
+	isSoldOut: boolean
+} = {
+	product: {
+		id: '',
+		name: '',
+		desc: '',
+		gradientColorStart: '',
+		gradientColorVia: '',
+		gradientColorStop: '',
+		images: [],
+		sizes: []
+	},
+	isSoldOut: false
+}
 
 let selectedSizeIdx = 0
 while (
@@ -22,18 +55,20 @@ const handleAddedToCart = () => {
 
 // for top section spinny thing
 let curIdx = 0
-let scrollSection: any
+let scrollSection: HTMLElement | undefined = undefined
 
 function handleScrollTop(e: any) {
 	curIdx = Math.round(e.target.scrollLeft / window.screen.width)
 }
 
 function handleSetTopScroll(idx: number) {
-	scrollSection.scrollLeft = idx * window.screen.width
+	if (scrollSection) {
+		scrollSection.scrollLeft = idx * window.screen.width
+	}
 }
 </script>
 
-<CldOgImage src={data.primaryImage?.cloudinaryId} alt={data.product.desc} />
+<CldOgImage src={data.primaryImage?.cloudinaryId || ''} alt={data.product.desc} />
 
 <svelte:head>
 	<title>{data.product.name} | Sediment Art</title>
@@ -56,16 +91,17 @@ function handleSetTopScroll(idx: number) {
 					</div>
 				{/each}
 			</div>
-			<div class="absolute bottom-3 left-1/2 translate-x-[-50%] flex gap-x-2">
-				{#each data.product.images as _, i}
-					<button
-						on:click={() => handleSetTopScroll(i)}
-						class={`w-[10px] h-[10px] ${
-							i === curIdx && 'bg-white'
-						} rounded-full border border-white`}
-					/>
-				{/each}
-			</div>
+		<div class="absolute bottom-3 left-1/2 translate-x-[-50%] flex gap-x-2">
+			{#each data.product.images as _, i}
+				<button
+					on:click={() => handleSetTopScroll(i)}
+					class={`w-[10px] h-[10px] ${
+						i === curIdx && 'bg-white'
+					} rounded-full border border-white`}
+					aria-label={`Switch to image ${i + 1}`}
+				></button>
+			{/each}
+		</div>
 		</div>
 	</div>
 	<!-- DESKTOP -->
@@ -80,56 +116,59 @@ function handleSetTopScroll(idx: number) {
 					class={`rounded-lg h-full ${curIdx == i ? 'flex' : 'hidden'}`}
 				/>
 			{/each}
-			<div class="absolute bottom-8 left-1/2 translate-x-[-50%] flex gap-x-2">
-				{#each data.product.images as _, i}
-					<button
-						on:click={() => (curIdx = i)}
-						class={`w-[10px] h-[10px] ${
-							i === curIdx && 'bg-white'
-						} rounded-full border border-white`}
-					/>
-				{/each}
-			</div>
-			<button
-				on:click={() => {
-					curIdx++;
-					if (curIdx == data.product.images.length) curIdx = 0;
-				}}
-				class="absolute cursor-pointer right-10 top-1/2 translate-y-[-50%] bg-gray-300/50 rounded-full flex flex-row justify-center items-center"
+		<div class="absolute bottom-8 left-1/2 translate-x-[-50%] flex gap-x-2">
+			{#each data.product.images as _, i}
+				<button
+					on:click={() => (curIdx = i)}
+					class={`w-[10px] h-[10px] ${
+						i === curIdx && 'bg-white'
+					} rounded-full border border-white`}
+					aria-label={`Switch to image ${i + 1}`}
+				></button>
+			{/each}
+		</div>
+		<button
+			on:click={() => {
+				curIdx++;
+				if (curIdx == data.product.images.length) curIdx = 0;
+			}}
+			class="absolute cursor-pointer right-10 top-1/2 translate-y-[-50%] bg-gray-300/50 rounded-full flex flex-row justify-center items-center"
+			aria-label="Next image"
+		>
+			<svg
+				width="48"
+				height="48"
+				viewBox="0 0 24 24"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
 			>
-				<svg
-					width="48"
-					height="48"
-					viewBox="0 0 24 24"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path
-						d="M8.29492 16.59L12.8749 12L8.29492 7.41L9.70492 6L15.7049 12L9.70492 18L8.29492 16.59Z"
-						fill="black"
-					/>
-				</svg>
-			</button>
-			<button
-				on:click={() => {
-					curIdx--;
-					if (curIdx == -1) curIdx = data.product.images.length - 1;
-				}}
-				class="absolute cursor-pointer left-10 top-1/2 translate-y-[-50%] bg-gray-300/50 rounded-full flex flex-row justify-center items-center"
+				<path
+					d="M8.29492 16.59L12.8749 12L8.29492 7.41L9.70492 6L15.7049 12L9.70492 18L8.29492 16.59Z"
+					fill="black"
+				/>
+			</svg>
+		</button>
+		<button
+			on:click={() => {
+				curIdx--;
+				if (curIdx == -1) curIdx = data.product.images.length - 1;
+			}}
+			class="absolute cursor-pointer left-10 top-1/2 translate-y-[-50%] bg-gray-300/50 rounded-full flex flex-row justify-center items-center"
+			aria-label="Previous image"
+		>
+			<svg
+				width="48"
+				height="48"
+				viewBox="0 0 24 24"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
 			>
-				<svg
-					width="48"
-					height="48"
-					viewBox="0 0 24 24"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path
-						d="M15.7049 16.59L11.1249 12L15.7049 7.41L14.2949 6L8.29492 12L14.2949 18L15.7049 16.59Z"
-						fill="black"
-					/>
-				</svg>
-			</button>
+				<path
+					d="M15.7049 16.59L11.1249 12L15.7049 7.41L14.2949 6L8.29492 12L14.2949 18L15.7049 16.59Z"
+					fill="black"
+				/>
+			</svg>
+		</button>
 		</div>
 
 		<div class="sm:p-4 py-6 flex flex-col gap-4 sm:h-[85vh] sm:overflow-scroll no-scroll">
@@ -238,22 +277,22 @@ function handleSetTopScroll(idx: number) {
 				style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;"
 				target="_blank"
 			>
-				<div style=" display: flex; flex-direction: row; align-items: center;">
+			<div style=" display: flex; flex-direction: row; align-items: center;">
+				<div
+					style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"
+				></div>
+				<div
+					style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;"
+				>
 					<div
-						style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"
-					/>
+						style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"
+					></div>
 					<div
-						style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;"
-					>
-						<div
-							style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"
-						/>
-						<div
-							style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"
-						/>
-					</div>
+						style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"
+					></div>
 				</div>
-				<div style="padding: 19% 0;" />
+			</div>
+			<div style="padding: 19% 0;"></div>
 				<div style="display:block; height:50px; margin:0 auto 12px; width:50px;">
 					<svg
 						width="50px"
@@ -279,50 +318,50 @@ function handleSetTopScroll(idx: number) {
 					>
 						View this profile on Instagram
 					</div>
+			</div>
+			<div style="padding: 12.5% 0;"></div>
+			<div style="display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;">
+				<div>
+					<div
+						style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);"
+					></div>
+					<div
+						style="background-color: #F4F4F4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;"
+					></div>
+					<div
+						style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);"
+					></div>
 				</div>
-				<div style="padding: 12.5% 0;" />
-				<div style="display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;">
-					<div>
-						<div
-							style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);"
-						/>
-						<div
-							style="background-color: #F4F4F4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;"
-						/>
-						<div
-							style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);"
-						/>
-					</div>
-					<div style="margin-left: 8px;">
-						<div
-							style=" background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;"
-						/>
-						<div
-							style=" width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-bottom: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg)"
-						/>
-					</div>
-					<div style="margin-left: auto;">
-						<div
-							style=" width: 0px; border-top: 8px solid #F4F4F4; border-right: 8px solid transparent; transform: translateY(16px);"
-						/>
-						<div
-							style=" background-color: #F4F4F4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);"
-						/>
-						<div
-							style=" width: 0; height: 0; border-top: 8px solid #F4F4F4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);"
-						/>
-					</div>
+				<div style="margin-left: 8px;">
+					<div
+						style=" background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;"
+					></div>
+					<div
+						style=" width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-bottom: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg)"
+					></div>
 				</div>
+				<div style="margin-left: auto;">
+					<div
+						style=" width: 0px; border-top: 8px solid #F4F4F4; border-right: 8px solid transparent; transform: translateY(16px);"
+					></div>
+					<div
+						style=" background-color: #F4F4F4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);"
+					></div>
+					<div
+						style=" width: 0; height: 0; border-top: 8px solid #F4F4F4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);"
+					></div>
+				</div>
+				</div>
+			<div
+				style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center; margin-bottom: 24px;"
+			>
 				<div
-					style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center; margin-bottom: 24px;"
-				>
-					<div
-						style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 224px;"
-					/>
-					<div
-						style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 144px;"
-					/>
-				</div></a
+					style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 224px;"
+				></div>
+				<div
+					style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 144px;"
+				></div>
+			</div></a
 			>
 			<p
 				style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;"

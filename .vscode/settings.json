@@ -17,7 +17,7 @@
     "editor.defaultFormatter": "biomejs.biome"
   },
   "[svelte]": {
-    "editor.defaultFormatter": "svelte.svelte-vscode"
+    "editor.defaultFormatter": "biomejs.biome"
   },
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
@@ -43,5 +43,11 @@
     "editor.defaultFormatter": "biomejs.biome"
   },
   "editor.formatOnPaste": true,
-  "emmet.showExpandedAbbreviation": "never"
+  "emmet.showExpandedAbbreviation": "never",
+  "emmet.includeLanguages": {
+    "svelte": "html"
+  },
+  "svelte.enable-ts-plugin": true,
+  "svelte.language-server.runtime": "bun",
+  "svelte.language-server.ls-path": "node_modules/svelte-language-server/bin/server.js"
 }

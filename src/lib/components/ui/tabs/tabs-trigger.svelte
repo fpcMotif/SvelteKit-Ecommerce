@@ -3,7 +3,6 @@ import { Tabs as TabsPrimitive } from 'bits-ui'
 import { cn } from '$lib/utils'
 
 type $$Props = TabsPrimitive.TriggerProps
-type $$Events = TabsPrimitive.TriggerEvents
 
 let className: $$Props['class'] = undefined
 export let value: $$Props['value']
@@ -17,7 +16,6 @@ export { className as class }
 	)}
 	{value}
 	{...$$restProps}
-	on:click
 >
 	<slot />
 </TabsPrimitive.Trigger>

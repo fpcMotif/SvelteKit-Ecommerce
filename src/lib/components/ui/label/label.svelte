@@ -2,20 +2,22 @@
 import { Label as LabelPrimitive } from 'bits-ui'
 import { cn } from '$lib/utils'
 
-type $$Props = LabelPrimitive.Props
-type $$Events = LabelPrimitive.Events
+type Props = {
+	for?: string
+	class?: string
+	children?: import('svelte').Snippet
+}
 
-let className: $$Props['class'] = undefined
-export { className as class }
+let { for: htmlFor, class: className, children, ...restProps }: Props = $props()
 </script>
 
 <LabelPrimitive.Root
+	for={htmlFor}
 	class={cn(
 		'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
 		className
 	)}
-	{...$$restProps}
-	on:mousedown
+	{...restProps}
 >
-	<slot />
+	{@render children?.()}
 </LabelPrimitive.Root>

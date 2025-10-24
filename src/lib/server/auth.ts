@@ -1,4 +1,3 @@
-import { convexAuthNextjsToken } from '@convex-dev/auth/nextjs/server'
 import { redirect } from '@sveltejs/kit'
 
 export function ensureAdmin(locals: App.Locals) {

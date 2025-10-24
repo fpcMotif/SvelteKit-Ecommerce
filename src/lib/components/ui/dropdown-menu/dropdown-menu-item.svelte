@@ -2,14 +2,12 @@
 import { DropdownMenu as DropdownMenuPrimitive } from 'bits-ui'
 import { cn } from '$lib/utils'
 
-type $$Props = DropdownMenuPrimitive.ItemProps & {
+type Props = DropdownMenuPrimitive.ItemProps & {
 	inset?: boolean
+	children?: import('svelte').Snippet
 }
-type $$Events = DropdownMenuPrimitive.ItemEvents
 
-let className: $$Props['class'] = undefined
-export let inset: $$Props['inset'] = undefined
-export { className as class }
+let { class: className, inset, children, ...restProps }: Props = $props()
 </script>
 
 <DropdownMenuPrimitive.Item
@@ -18,14 +16,7 @@ export { className as class }
 		inset && 'pl-8',
 		className
 	)}
-	{...$$restProps}
-	on:click
-	on:keydown
-	on:focusin
-	on:focusout
-	on:pointerdown
-	on:pointerleave
-	on:pointermove
+	{...restProps}
 >
-	<slot />
+	{@render children?.()}
 </DropdownMenuPrimitive.Item>

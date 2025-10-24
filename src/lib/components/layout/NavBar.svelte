@@ -1,31 +1,31 @@
 <script lang="ts">
-  import { CldImage } from "svelte-cloudinary";
-  import { cartLengthStore } from "$lib/client/cart";
-  import Logo from "$lib/client/images/logo_light.png";
-  import MobileLogo from "$lib/client/images/mobile_logo_light.png";
-  import { Button } from "$lib/components/ui/button";
-  export let user: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    isAdmin: boolean;
-  } | null;
+import { CldImage } from 'svelte-cloudinary'
+import { cartLengthStore } from '$lib/client/cart'
+import Logo from '$lib/client/images/logo_light.png'
+import MobileLogo from '$lib/client/images/mobile_logo_light.png'
+import { Button } from '$lib/components/ui/button'
+export let user: {
+	firstName: string
+	lastName: string
+	email: string
+	isAdmin: boolean
+} | null
 
-  const handleCollectionsHover = () => {
-    document.getElementById("drop-menu")?.classList.remove("hidden");
-  };
+const handleCollectionsHover = () => {
+	document.getElementById('drop-menu')?.classList.remove('hidden')
+}
 
-  const handleMobileMenu = () => {
-    const menu = document.getElementById("mobile-nav");
-    menu?.classList.remove("opacity-0");
-    menu?.classList.remove("pointer-events-none");
-    menu?.classList.add("opacity-100");
-  };
+const handleMobileMenu = () => {
+	const menu = document.getElementById('mobile-nav')
+	menu?.classList.remove('opacity-0')
+	menu?.classList.remove('pointer-events-none')
+	menu?.classList.add('opacity-100')
+}
 
-  export let pieces: {
-    id: string;
-    name: string;
-  }[];
+export let pieces: {
+	id: string
+	name: string
+}[]
 </script>
 
 <nav
@@ -67,8 +67,7 @@
       <CldImage
         width={500 * 2}
         height={400 * 2}
-        src={"products/a3mazygrqkbbcoqnjszp" ||
-          "https://via.placeholder.com/355x200"}
+        src="products/a3mazygrqkbbcoqnjszp"
         alt="Description of my image"
         class="shadow-md"
         sizes="100vw"

@@ -21,7 +21,7 @@ import * as Accordion from '$lib/components/ui/accordion'
 			</p>
 		</div>
 
-		<Accordion.Root class="w-full">
+		<Accordion.Root class="w-full" type="single">
 			<Accordion.Item value="q-1">
 				<Accordion.Trigger class="md:text-2xl font-jura text-xl"
 					>What are you selling?</Accordion.Trigger

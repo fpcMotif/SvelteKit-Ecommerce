@@ -158,11 +158,11 @@ async function handleSubmit(event: { currentTarget: EventTarget & HTMLFormElemen
 					</Dialog.Content>
 				</Dialog.Root>
 			{/if}
-		</form>
-	</div>
-	<div class="bg-neutral-300 h-[1px] w-full" />
+	</form>
+</div>
+<div class="bg-neutral-300 h-[1px] w-full"></div>
 
-	<div class=" md:rounded-lg">
+<div class=" md:rounded-lg">
 		<div class="flex flex-col md:flex-row flex-wrap">
 			{#each cart as cartItem, i}
 				<div class="w-full md:mx-auto py-2 justify-center flex flex-row gap-2 md:gap-10 p-2">
@@ -212,10 +212,10 @@ async function handleSubmit(event: { currentTarget: EventTarget & HTMLFormElemen
 								cart = getCart();
 							}}>Delete</Button
 						> -->
-					</div>
 				</div>
-				<div class="bg-neutral-300 h-[1px] w-2/3 mx-auto" />
-			{/each}
+			</div>
+			<div class="bg-neutral-300 h-[1px] w-2/3 mx-auto"></div>
+		{/each}
 		</div>
 	</div>
 </div>

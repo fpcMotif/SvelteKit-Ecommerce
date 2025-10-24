@@ -24,14 +24,12 @@ export const actions = {
 				}
 			}).size.price / 100
 
-		const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
-			...body.map((item) => {
-				return {
-					price: item.size.stripePriceId,
-					quantity: item.quantity
-				}
-			})
-		]
+		const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = body.map((item) => {
+			return {
+				price: item.size.stripePriceId,
+				quantity: item.quantity
+			}
+		})
 
 		if (total < 125) {
 			// add shipping to total

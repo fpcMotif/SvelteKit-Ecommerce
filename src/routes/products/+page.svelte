@@ -18,7 +18,11 @@ let searchQuery = ''
 let displayMode = 'sm'
 
 // this feels really stupid...
-$: searchQuery !== '' && handleInputChange(searchQuery)
+$: {
+	if (searchQuery !== '') {
+		handleInputChange(searchQuery)
+	}
+}
 
 function handleInputChange(query: string) {
 	clearTimeout(debounceTimer)
@@ -151,20 +155,30 @@ $: selected = ($page.state as any).selected
 	</div>
 	{#if data.products.length > 0}
 		<div class="flex flex-row items-left sm:col-span-4 flex-wrap sm:place-content-start px-1">
-			{#each data.products as product}
-				<ProductCard
-					itemData={{
-						name: product.name,
-						productId: product.id,
-						cloudinaryId: product.images.length > 0 ? product.images[0].cloudinaryId : null,
-						tags: product.tags,
-						selectTag: addParam,
-						displayMode: displayMode,
-						sizes: product.sizes,
-						desc: product.desc
-					}}
-				/>
-			{/each}
+		{#each data.products as product}
+			<ProductCard
+				itemData={{
+					name: product.name,
+					productId: product.id,
+					cloudinaryId: product.images.length > 0 ? product.images[0].cloudinaryId : null,
+					tags: (product.tags as string[]),
+					selectTag: addParam,
+					displayMode: displayMode,
+					sizes: (product.sizes as {
+						code: string
+						height: number
+						name: string
+						width: number
+						productId: string
+						isAvailable: boolean
+						price: number
+						stripePriceId: string
+						stripeProductId: string
+					}[]),
+					desc: product.desc
+				}}
+			/>
+		{/each}
 		</div>
 	{:else}
 		<div><h2>coming soon...</h2></div>

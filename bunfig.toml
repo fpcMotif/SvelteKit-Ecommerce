@@ -1,0 +1,15 @@
+[runtime]
+# 使用 bun 的嵌入式 Node.js 运行时以获得最佳兼容性
+autoPrefix = true
+
+[javascript]
+# 启用 JSX 转换和 TypeScript 支持
+jsx = "automatic"
+
+[bundle]
+# 打包时启用 loader 支持
+root = "."
+
+[define]
+# 设置环境变量以便与 Node.js 工具兼容
+"process.env.BUN" = "true"

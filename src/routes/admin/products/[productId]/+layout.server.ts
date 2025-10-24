@@ -1,23 +1,23 @@
 import { error } from '@sveltejs/kit'
-import { eq } from 'drizzle-orm'
 import { ensureAdmin } from '$lib/server/auth'
-import { db } from '$lib/server/db'
-import { product } from '$lib/server/db/schema.js'
+import { convexHttp } from '$lib/server/convex'
+import { api } from '../../../../../convex/_generated/api'
 
-export const load = async ({ locals, params }) => {
+export const load = async ({ locals, params, url }) => {
 	ensureAdmin(locals)
 
-	const firstProduct = await db.query.product.findFirst({
-		where: eq(product.id, params.productId),
-		columns: {
-			name: true,
-			desc: true
-		}
-	})
+	const product = await convexHttp.query(api.products.getById, { id: params.productId })
 
-	if (!firstProduct) {
+	if (!product) {
 		error(404)
 	}
 
-	return { productId: params.productId, productBasics: firstProduct }
+	return {
+		productId: params.productId,
+		productBasics: {
+			name: product.name,
+			desc: product.desc
+		},
+		url: url.pathname
+	}
 }

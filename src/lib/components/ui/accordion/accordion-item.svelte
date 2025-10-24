@@ -2,7 +2,9 @@
 import { Accordion as AccordionPrimitive } from 'bits-ui'
 import { cn } from '$lib/utils'
 
-type $$Props = AccordionPrimitive.ItemProps
+type $$Props = AccordionPrimitive.ItemProps & {
+	value: string
+}
 
 let className: $$Props['class'] = undefined
 export let value: $$Props['value']

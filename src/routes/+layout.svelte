@@ -1,38 +1,38 @@
 <script>
-  import "../app.css";
-  import { fade } from "svelte/transition";
-  import { browser } from "$app/environment";
-  import Footer from "$lib/components/layout/Footer.svelte";
-  import NavBar from "$lib/components/layout/NavBar.svelte";
-  import SpecialOffer from "$lib/components/SpecialOffer.svelte";
-  import * as Alert from "$lib/components/ui/alert";
+import '../app.css'
+import { fade } from 'svelte/transition'
+import { browser } from '$app/environment'
+import Footer from '$lib/components/layout/Footer.svelte'
+import NavBar from '$lib/components/layout/NavBar.svelte'
+import SpecialOffer from '$lib/components/SpecialOffer.svelte'
+import * as Alert from '$lib/components/ui/alert'
 
-  export let data;
+export let data
 
-  const handleRemoveMenu = () => {
-    if (browser) {
-      document.getElementById("drop-menu")?.classList.add("hidden");
-    }
-  };
+const handleRemoveMenu = () => {
+	if (browser) {
+		document.getElementById('drop-menu')?.classList.add('hidden')
+	}
+}
 
-  const handleRemoveMobile = () => {
-    if (browser) {
-      const menu = document.getElementById("mobile-nav");
-      menu?.classList.add("opacity-0");
-      menu?.classList.add("pointer-events-none");
-      menu?.classList.remove("opacity-100");
-    }
-  };
+const handleRemoveMobile = () => {
+	if (browser) {
+		const menu = document.getElementById('mobile-nav')
+		menu?.classList.add('opacity-0')
+		menu?.classList.add('pointer-events-none')
+		menu?.classList.remove('opacity-100')
+	}
+}
 
-  // 只在客户端导入和使用 beforeNavigate
-  if (browser) {
-    import("$app/navigation").then(({ beforeNavigate }) => {
-      beforeNavigate(() => {
-        handleRemoveMenu();
-        handleRemoveMobile();
-      });
-    });
-  }
+// 只在客户端导入和使用 beforeNavigate
+if (browser) {
+	import('$app/navigation').then(({ beforeNavigate }) => {
+		beforeNavigate(() => {
+			handleRemoveMenu()
+			handleRemoveMobile()
+		})
+	})
+}
 </script>
 
 <svelte:head>

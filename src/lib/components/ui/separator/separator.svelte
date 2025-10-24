@@ -2,7 +2,11 @@
 import { Separator as SeparatorPrimitive } from 'bits-ui'
 import { cn } from '$lib/utils'
 
-type $$Props = SeparatorPrimitive.Props
+type $$Props = {
+	orientation?: 'horizontal' | 'vertical'
+	decorative?: boolean
+	class?: string
+}
 
 let className: $$Props['class'] = undefined
 export let orientation: $$Props['orientation'] = 'horizontal'

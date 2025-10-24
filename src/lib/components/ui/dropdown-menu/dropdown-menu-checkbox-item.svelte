@@ -3,12 +3,11 @@ import { DropdownMenu as DropdownMenuPrimitive } from 'bits-ui'
 import { Check } from 'lucide-svelte'
 import { cn } from '$lib/utils'
 
-type $$Props = DropdownMenuPrimitive.CheckboxItemProps
-type $$Events = DropdownMenuPrimitive.CheckboxItemEvents
+type Props = DropdownMenuPrimitive.CheckboxItemProps & {
+	children?: import('svelte').Snippet
+}
 
-let className: $$Props['class'] = undefined
-export let checked: $$Props['checked'] = undefined
-export { className as class }
+let { class: className, checked = $bindable(), children, ...restProps }: Props = $props()
 </script>
 
 <DropdownMenuPrimitive.CheckboxItem
@@ -17,19 +16,12 @@ export { className as class }
 		'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
 		className
 	)}
-	{...$$restProps}
-	on:click
-	on:keydown
-	on:focusin
-	on:focusout
-	on:pointerdown
-	on:pointerleave
-	on:pointermove
+	{...restProps}
 >
 	<span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-		<DropdownMenuPrimitive.CheckboxIndicator>
+		{#if checked}
 			<Check class="h-4 w-4" />
-		</DropdownMenuPrimitive.CheckboxIndicator>
+		{/if}
 	</span>
-	<slot />
+	{@render children?.()}
 </DropdownMenuPrimitive.CheckboxItem>

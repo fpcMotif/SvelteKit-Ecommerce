@@ -1,24 +1,26 @@
 import { error } from '@sveltejs/kit'
-import { desc, eq } from 'drizzle-orm'
 import { zfd } from 'zod-form-data'
 import { ensureAdmin } from '$lib/server/auth'
-import { db } from '$lib/server/db'
-import { productImage } from '$lib/server/db/schema'
+import { convexHttp } from '$lib/server/convex'
+import { api } from '../../../../../../convex/_generated/api'
 
 export const load = async ({ locals, params }) => {
 	ensureAdmin(locals)
 
-	const images = await db
-		.select()
-		.from(productImage)
-		.where(eq(productImage.productId, params.productId))
-		.orderBy(desc(productImage.isPrimary))
+	const product = await convexHttp.query(api.products.getById, { id: params.productId })
 
-	return { images }
+	if (!product) {
+		error(404)
+	}
+
+	// Sort images with primary first
+	const images = [...product.images].sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary))
+
+	return { productId: params.productId, images }
 }
 
 export const actions = {
-	toggleVertical: async ({ locals, request }) => {
+	toggleVertical: async ({ locals, request, params }) => {
 		ensureAdmin(locals)
 
 		const data = await request.formData()
@@ -33,21 +35,27 @@ export const actions = {
 			error(400, res.error.name)
 		}
 
-		const cur = await db
-			.select({
-				isVertical: productImage.isVertical
-			})
-			.from(productImage)
-			.where(eq(productImage.cloudinaryId, res.data.cloudinaryId))
+		const product = await convexHttp.query(api.products.getById, { id: params.productId })
 
-		if (cur.length > 0) {
-			await db
-				.update(productImage)
-				.set({
-					isVertical: !cur[0].isVertical
-				})
-				.where(eq(productImage.cloudinaryId, res.data.cloudinaryId))
+		if (!product) {
+			error(404)
 		}
+
+		const updatedImages: Array<{
+			cloudinaryId: string
+			width: number
+			height: number
+			isPrimary: boolean
+			isVertical: boolean
+			order: number
+		}> = product.images.map((img) =>
+			img.cloudinaryId === res.data.cloudinaryId ? { ...img, isVertical: !img.isVertical } : img
+		)
+
+		await convexHttp.mutation(api.products.update, {
+			id: params.productId,
+			patch: { images: updatedImages }
+		})
 
 		return { success: true }
 	},
@@ -66,23 +74,32 @@ export const actions = {
 			error(400, res.error.name)
 		}
 
-		await db
-			.update(productImage)
-			.set({
-				isPrimary: false
-			})
-			.where(eq(productImage.productId, params.productId))
+		const product = await convexHttp.query(api.products.getById, { id: params.productId })
 
-		await db
-			.update(productImage)
-			.set({
-				isPrimary: true
-			})
-			.where(eq(productImage.cloudinaryId, res.data.cloudinaryId))
+		if (!product) {
+			error(404)
+		}
+
+		const updatedImages: Array<{
+			cloudinaryId: string
+			width: number
+			height: number
+			isPrimary: boolean
+			isVertical: boolean
+			order: number
+		}> = product.images.map((img) => ({
+			...img,
+			isPrimary: img.cloudinaryId === res.data.cloudinaryId
+		}))
+
+		await convexHttp.mutation(api.products.update, {
+			id: params.productId,
+			patch: { images: updatedImages }
+		})
 
 		return { success: true }
 	},
-	delete: async ({ locals, request }) => {
+	delete: async ({ locals, request, params }) => {
 		ensureAdmin(locals)
 
 		const data = await request.formData()
@@ -97,7 +114,25 @@ export const actions = {
 			error(400, res.error.name)
 		}
 
-		await db.delete(productImage).where(eq(productImage.cloudinaryId, res.data.cloudinaryId))
+		const product = await convexHttp.query(api.products.getById, { id: params.productId })
+
+		if (!product) {
+			error(404)
+		}
+
+		const updatedImages: Array<{
+			cloudinaryId: string
+			width: number
+			height: number
+			isPrimary: boolean
+			isVertical: boolean
+			order: number
+		}> = product.images.filter((img) => img.cloudinaryId !== res.data.cloudinaryId)
+
+		await convexHttp.mutation(api.products.update, {
+			id: params.productId,
+			patch: { images: updatedImages }
+		})
 
 		return { success: true }
 	},
@@ -118,11 +153,26 @@ export const actions = {
 			error(400, res.error.name)
 		}
 
-		await db.insert(productImage).values({
+		const product = await convexHttp.query(api.products.getById, { id: params.productId })
+
+		if (!product) {
+			error(404)
+		}
+
+		const newImage = {
+			cloudinaryId: res.data.cloudinaryId,
 			width: res.data.width,
 			height: res.data.height,
-			cloudinaryId: res.data.cloudinaryId,
-			productId: params.productId
+			isVertical: res.data.height > res.data.width,
+			isPrimary: product.images.length === 0,
+			order: product.images.length
+		}
+
+		const updatedImages = [...product.images, newImage]
+
+		await convexHttp.mutation(api.products.update, {
+			id: params.productId,
+			patch: { images: updatedImages }
 		})
 
 		return { success: true }

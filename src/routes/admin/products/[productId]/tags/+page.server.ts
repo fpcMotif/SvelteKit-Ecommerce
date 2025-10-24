@@ -1,38 +1,29 @@
 import { error } from '@sveltejs/kit'
-import { and, eq, like } from 'drizzle-orm'
 import { zfd } from 'zod-form-data'
 import { ensureAdmin } from '$lib/server/auth'
-import { db } from '$lib/server/db'
-import { productTag, productToProductTag } from '$lib/server/db/schema'
+import { convexHttp } from '$lib/server/convex'
+import { api } from '../../../../../../convex/_generated/api'
 
 export const load = async ({ locals, params }) => {
 	ensureAdmin(locals)
 
-	const tagsRel = await db.query.productToProductTag.findMany({
-		where: eq(productToProductTag.productId, params.productId),
-		with: {
-			tag: true
-		}
-	})
+	const product = await convexHttp.query(api.products.getById, { id: params.productId })
 
-	return {
-		tagsSelected: tagsRel.map((item) => {
-			return {
-				name: item.tag.name,
-				desc: item.tag.desc
-			}
-		})
+	if (!product) {
+		error(404)
 	}
+
+	return { tags: product.tags }
 }
 
 export const actions = {
-	removeTagFromProduct: async ({ locals, request, params }) => {
+	add: async ({ locals, request, params }) => {
 		ensureAdmin(locals)
 
 		const data = await request.formData()
 
 		const schema = zfd.formData({
-			tagName: zfd.text()
+			tag: zfd.text()
 		})
 
 		const res = schema.safeParse(data)
@@ -41,74 +32,39 @@ export const actions = {
 			error(400, res.error.name)
 		}
 
-		await db
-			.delete(productToProductTag)
-			.where(
-				and(
-					eq(productToProductTag.tagId, res.data.tagName),
-					eq(productToProductTag.productId, params.productId)
-				)
-			)
+		const product = await convexHttp.query(api.products.getById, { id: params.productId })
 
-		return { success: true }
-	},
-	deleteTag: async ({ locals, request }) => {
-		ensureAdmin(locals)
-
-		const data = await request.formData()
-
-		const schema = zfd.formData({
-			tagName: zfd.text()
-		})
-
-		const res = schema.safeParse(data)
-
-		if (!res.success) {
-			error(400, res.error.name)
+		if (!product) {
+			error(404)
 		}
 
-		// delete the product to tag relation
-		await db.delete(productToProductTag).where(eq(productToProductTag.tagId, res.data.tagName))
+		const trimmedTag = res.data.tag.trim()
 
-		await db.delete(productTag).where(eq(productTag.name, res.data.tagName))
-
-		return { success: true }
-	},
-	createNewTag: async ({ locals, request, params }) => {
-		ensureAdmin(locals)
-
-		const data = await request.formData()
-
-		const schema = zfd.formData({
-			tagName: zfd.text()
-		})
-
-		const res = schema.safeParse(data)
-
-		if (!res.success) {
-			error(400, res.error.name)
+		if (!trimmedTag) {
+			error(400, 'Tag cannot be empty')
 		}
 
-		await db.insert(productTag).values({
-			name: res.data.tagName,
-			desc: ''
-		})
+		if (product.tags.includes(trimmedTag)) {
+			return { success: true }
+		}
 
-		await db.insert(productToProductTag).values({
-			tagId: res.data.tagName,
-			productId: params.productId
+		const updatedTags = [...product.tags, trimmedTag]
+
+		await convexHttp.mutation(api.products.update, {
+			id: params.productId,
+			patch: { tags: updatedTags }
 		})
 
 		return { success: true }
 	},
-	editTag: async ({ locals, request }) => {
+
+	remove: async ({ locals, request, params }) => {
 		ensureAdmin(locals)
 
 		const data = await request.formData()
 
 		const schema = zfd.formData({
-			tagName: zfd.text(),
-			tagDesc: zfd.text()
+			tag: zfd.text()
 		})
 
 		const res = schema.safeParse(data)
@@ -117,72 +73,19 @@ export const actions = {
 			error(400, res.error.name)
 		}
 
-		await db
-			.update(productTag)
-			.set({
-				desc: res.data.tagDesc
-			})
-			.where(eq(productTag.name, res.data.tagName))
+		const product = await convexHttp.query(api.products.getById, { id: params.productId })
 
-		return { success: true }
-	},
-	addTagToProduct: async ({ locals, request, params }) => {
-		ensureAdmin(locals)
-
-		const data = await request.formData()
-
-		const schema = zfd.formData({
-			tagName: zfd.text()
-		})
-
-		const res = schema.safeParse(data)
-
-		if (!res.success) {
-			error(400, res.error.name)
+		if (!product) {
+			error(404)
 		}
 
-		await db.insert(productToProductTag).values({
-			tagId: res.data.tagName,
-			productId: params.productId
+		const updatedTags = product.tags.filter((t) => t !== res.data.tag)
+
+		await convexHttp.mutation(api.products.update, {
+			id: params.productId,
+			patch: { tags: updatedTags }
 		})
 
 		return { success: true }
-	},
-	search: async ({ locals, request, params }) => {
-		ensureAdmin(locals)
-
-		const data = await request.formData()
-
-		const schema = zfd.formData({
-			query: zfd.text()
-		})
-
-		const res = schema.safeParse(data)
-
-		if (!res.success) {
-			error(400, res.error.name)
-		}
-
-		// find all tags which are not currently applied to the product, but also fit the query
-		const searchedTags = await db
-			.select({
-				tagName: productTag.name
-			})
-			.from(productTag)
-			.where(like(productTag.name, `%${res.data.query}%`))
-
-		const currentlySelected = await db
-			.select({
-				tagName: productToProductTag.tagId
-			})
-			.from(productToProductTag)
-			.where(eq(productToProductTag.productId, params.productId))
-
-		console.log(searchedTags)
-		console.log(currentlySelected)
-
-		// const tags = await except(searchedTags, currentlySelected).limit(6);
-
-		return { tags: searchedTags }
 	}
 }

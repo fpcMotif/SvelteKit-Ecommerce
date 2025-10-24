@@ -8,7 +8,7 @@ import { Input } from '$lib/components/ui/input'
 import { Label } from '$lib/components/ui/label'
 import * as Table from '$lib/components/ui/table'
 
-export let data
+export let data: { products: Array<{ id: string; name: string }> } = { products: [] }
 
 let showAlertSuccessDelete = false
 
@@ -44,11 +44,11 @@ const deleteItem = (productId: string, idx: number) => {
 							Edit
 						</Button>
 						<AlertDialog.Root>
-							<AlertDialog.Trigger asChild let:builder>
-								<Button class=" " builders={[builder]}>
+							<AlertDialog.Trigger>
+								<Button class=" ">
 									<Trash class="mr-2 h-4 w-4" />
-									Delete</Button
-								>
+									Delete
+								</Button>
 							</AlertDialog.Trigger>
 							<AlertDialog.Content>
 								<AlertDialog.Header>

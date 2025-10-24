@@ -23,24 +23,18 @@
   },
   "overrides": [
     {
-      "includes": [
-        "*.svelte"
-      ],
+      "includes": ["*.svelte"],
       "formatter": {
         "enabled": false
       }
     },
     {
-      "includes": [
-        "**/tsconfig*.json"
-      ],
+      "includes": ["**/tsconfig*.json"],
       "formatter": {
         "enabled": false
       }
     }
   ],
-  "extends": [
-    "ultracite"
-  ],
+  "extends": ["ultracite"],
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json"
 }

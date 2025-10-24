@@ -1,4 +1,7 @@
-import { api } from '../../../convex/_generated/api'
+// @ts-ignore - Convex generates .d.ts files which TypeScript struggles to resolve
+import { api } from '../../../../convex/_generated/api'
+// @ts-ignore
+import type { Id } from '../../../../convex/_generated/dataModel'
 import { convexHttp } from '../convex'
 
 export const fetchAllOrders = async (take?: number, skip?: number) => {
@@ -31,7 +34,12 @@ export const createNewOrder = async (data: {
 		stripeOrderId: data.orderId,
 		stripeCustomerId: data.customerId ?? undefined,
 		totalPrice: data.totalPrice,
-		items: data.items as any,
+		items: data.items as unknown as Array<{
+			productId: Id<'products'>
+			productSizeCode: string
+			quantity: number
+			priceCents: number
+		}>,
 		status: 'placed'
 	})
 
